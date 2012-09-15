@@ -4,5 +4,5 @@
    android:minHeight="50dip"
    android:updatePeriodMillis="10000"
    android:initialLayout="@layout/widget"
-   android:configure="ie.cathalcoffey.android.Configuration" 
+   android:configure="ie.cathalcoffey.android.projecteuler.Configuration" 
 />
