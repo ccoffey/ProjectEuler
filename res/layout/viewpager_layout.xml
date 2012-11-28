@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+    
+	<LinearLayout
+	  android:layout_width="fill_parent"
+	  android:layout_height="fill_parent"
+	  android:orientation="vertical"
+	  android:layout_above="@+id/solve"
+	  >
+	  
+	  <com.viewpagerindicator.TitlePageIndicator
+		android:id="@+id/titles"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent" 
+		android:background="#000"/>
+	  
+	  <android.support.v4.view.ViewPager
+	  	android:id="@+android:id/viewpager"
+	  	android:layout_width="fill_parent"
+	 	android:layout_height="fill_parent"
+	  	/>
+	</LinearLayout>
+	<LinearLayout
+        android:id="@+id/solve"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true" 
+        android:background="@drawable/abs__ab_solid_dark_holo">
+		
+		<TextView
+		    android:id="@+id/solved"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="center"
+	        android:padding="5dp"
+	        android:textColor="#fff"
+		    android:textSize="@dimen/abs__action_bar_title_text_size"
+	        android:background="@drawable/abs__ab_solid_dark_holo"
+	        android:text="Solve" />
+	   
+    </LinearLayout>
+</RelativeLayout>

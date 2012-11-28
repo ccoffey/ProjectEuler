@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:orientation="vertical"
+  android:gravity="center"
+  >
+  
+  <WebView
+    android:id="@+id/webView1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="none"
+    android:visibility="gone"
+  />
+  
+  <ScrollView
+      android:id="@+id/solve"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent" >
+      
+      <LinearLayout
+          android:layout_width="fill_parent"
+          android:layout_height="fill_parent"
+          android:orientation="vertical"
+          android:padding="20dip" >
+
+	      <ImageView
+	          android:id="@+id/imageView1"
+	          android:background="@drawable/border"
+	          android:layout_gravity="center_horizontal"
+	          android:layout_width="150dp"
+	          android:layout_height="50dp"
+	          android:scaleType="fitXY"
+	          android:src="@drawable/loading" />
+	     <TextView
+	          android:layout_width="wrap_content"
+	          android:layout_height="wrap_content"
+	          android:layout_gravity="center_horizontal"
+	          android:text="Click to regenerate" />
+	
+	      <TextView
+	          android:layout_width="fill_parent"
+	          android:layout_height="wrap_content"
+	          android:layout_marginTop="10dp"
+	          android:text="Answer" />
+	          
+	      <EditText
+	          android:id="@+id/guess"
+	          android:layout_width="match_parent"
+	          android:layout_height="wrap_content" >
+	
+	          <requestFocus />
+	      </EditText>
+	
+	      <TextView
+	          android:layout_width="fill_parent"
+	          android:layout_height="wrap_content"
+	          android:layout_marginTop="10dp"
+	          android:text="Captcha" />
+	          
+	      <EditText
+	          android:id="@+id/confirm"
+	          android:layout_width="match_parent"
+	          android:layout_height="wrap_content" >
+	
+	          <requestFocus />
+	      </EditText>
+	      <Button
+	      android:id="@+id/button1"
+	      android:layout_width="match_parent"
+	      android:layout_height="wrap_content"
+	      android:layout_marginTop="10dp"
+	      android:text="Submit" />
+	  </LinearLayout>
+  </ScrollView>
+</LinearLayout>

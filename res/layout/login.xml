@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+    android:layout_height="fill_parent">    
+	<ScrollView
+	    android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_above="@+id/progress" >
+		<LinearLayout 
+		    android:orientation="vertical"
+		    android:padding="30dp"
+		    android:layout_width="fill_parent"
+		   	android:layout_height="wrap_content"
+	        android:layout_gravity="center">
+		
+		    <ImageView 
+		        android:layout_gravity="center"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:src="@drawable/pe_banner_light"
+		        />
+		    <TextView
+		        android:paddingTop="20px"
+		        android:id="@+id/textView1"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Username" />
+		
+		    <EditText
+		        android:id="@+id/editText1"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content" >
+		
+		        <requestFocus />
+		    </EditText>
+		
+		    <TextView
+		        android:paddingTop="20px"
+		        android:id="@+id/textView2"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Password" />
+		
+		    <EditText
+		        android:id="@+id/editText2"
+		        android:inputType="textPassword"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginBottom="20px">
+		    </EditText>
+		
+		    <Button
+		        android:id="@+id/button1"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Login" >
+		    </Button>
+		</LinearLayout>
+	</ScrollView>
+	<LinearLayout
+        android:id="@+id/progress"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true" 
+        android:background="@drawable/abs__ab_solid_dark_holo">
+		
+		<TextView
+		    android:textColor="#fff"
+		    android:textSize="@dimen/abs__action_bar_title_text_size"
+		    android:id="@+id/solved"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:padding="5dp"
+	        android:text="" />
+	   
+    </LinearLayout>
+</RelativeLayout>

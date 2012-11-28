@@ -14,7 +14,7 @@
 	    	    android:id="@+id/problem"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Problem "
+				android:text=""
 				android:textSize="20sp"
 				android:textStyle="bold"/>
 		    <TextView 
@@ -44,6 +44,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textStyle="italic"
+				android:paddingLeft="1dip"
 				android:text=" Eulerians"/>
 	    </LinearLayout>
 	<TextView 
@@ -51,6 +52,6 @@
         android:paddingTop="10dip"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Add all the natural numbers below one thousand that are multiples of 3 or 5."/>
+		android:text=""/>
     
 </LinearLayout>
