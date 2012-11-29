@@ -11,7 +11,7 @@ cookie_jar = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar))
 urllib2.install_opener(opener)
 
-params = urllib.urlencode({'username': 'cathal', 'password': 'pi=3.1415', 'login': 'Login'})
+params = urllib.urlencode({'username': 'cathal', 'password': '', 'login': 'Login'})
 url = 'http://projecteuler.net/login'
 
 req = urllib2.Request(url, params)

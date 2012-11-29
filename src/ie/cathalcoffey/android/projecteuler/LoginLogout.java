@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import org.apache.http.client.ClientProtocolException;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 
+import ie.cathalcoffey.android.projecteuler.PageFragment.SolveOperation;
 import ie.cathalcoffey.android.projecteuler.ProjectEulerClient.EulerProblem;
 import ie.cathalcoffey.android.projecteuler.ProjectEulerClient.EulerProfile;
 import android.app.Activity;
@@ -17,6 +19,9 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -24,23 +29,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-public class LoginLogout extends SherlockActivity 
+public class LoginLogout extends SherlockFragmentActivity implements LoginDialogFragment.NoticeDialogListener
 {
+	FragmentActivity fragmentActivity;
 	Context context;
-	private SharedPreferences settings;
-    private SharedPreferences.Editor prefEditor;
     
-	public class LongOperation extends AsyncTask<String, Void, String> 
+	public class LoginOperation extends AsyncTask<String, Void, String> 
 	{
-		  private ProgressDialog dialog;
-		  private String progressMsg;
-		  private boolean success;
+		  LoginDialogFragment dialog;
+		  String progressMsg;
+		  boolean success;
+		  boolean completed;
 		   
-		  public LongOperation()
+		  public LoginOperation(FragmentActivity fragmentActivity)
 		  {
-			  dialog = new ProgressDialog(context);
-			  dialog.setCanceledOnTouchOutside(false);
+			  dialog = new LoginDialogFragment();
+			  dialog.setCancelable(false);
+			  dialog.show(fragmentActivity.getSupportFragmentManager(), "");
 		  }
 		
 	      @Override
@@ -51,20 +56,26 @@ public class LoginLogout extends SherlockActivity
 	    	    String username = params[0];
 				String password = params[1];
 				
-			    ProjectEulerClient pec = new ProjectEulerClient();
+			    ProjectEulerClient pec = MyApplication.pec;
+			    if(MyApplication.pec == null)
+			    {
+			    	MyApplication.pec = new ProjectEulerClient();
+			    	pec = MyApplication.pec;
+			    }
+			    
 			    try 
 			    {
 					if(pec.login(username, password))
 					{
 						EulerProfile ep = pec.getProfile();
 						
-		    	        prefEditor.putString("username", username);
-		    	        prefEditor.putString("password", password);
-		    	        prefEditor.putString("alias", ep.alias);
-		    	        prefEditor.putString("country", ep.country);
-		    	        prefEditor.putString("language", ep.language);
-		    	        prefEditor.putString("level", ep.level);
-		    	        prefEditor.putString("solved", ep.solved);
+						MyApplication.prefEditor.putString("username", username);
+						MyApplication.prefEditor.putString("password", password);
+						MyApplication.prefEditor.putString("alias", ep.alias);
+						MyApplication.prefEditor.putString("country", ep.country);
+						MyApplication.prefEditor.putString("language", ep.language);
+						MyApplication.prefEditor.putString("level", ep.level);
+						MyApplication.prefEditor.putString("solved", ep.solved);
 		    	        
 						this.progressMsg = "Login successful";
 						publishProgress();
@@ -81,6 +92,7 @@ public class LoginLogout extends SherlockActivity
 						MyApplication.myDbHelper.updateProblems(pec, problems, false);	
 						
 						success = true;
+						completed = true;
 						
 				        this.progressMsg = "Finished";
 						publishProgress();
@@ -91,6 +103,8 @@ public class LoginLogout extends SherlockActivity
 					else
 					{
 						this.progressMsg = pec.getError();
+						completed = true;
+						
 						publishProgress();
 					}
 				} 
@@ -113,28 +127,35 @@ public class LoginLogout extends SherlockActivity
 	      @Override
 	      protected void onPostExecute(String result) 
 	      {               	    	  
-	    	  if(success && dialog.isShowing())
-	    	  {
-    	          prefEditor.commit();
-	    	        
-	    		  dialog.dismiss();
-	    		  
-	    		  finish();
-	    		  overridePendingTransition(0, 0);
-	    	  }
+
 	      }
 
 	      @Override
 	      protected void onPreExecute() 
 	      {
-	    	  this.dialog.setMessage("Attempting login");
-	          this.dialog.show();
+
 	      }
 
 	      @Override
 	      protected void onProgressUpdate(Void... values) 
 	      {
-	    	  this.dialog.setMessage(progressMsg);
+	    	  try
+	    	  {
+		    	  if(dialog != null)
+		    	  {  
+			    	  MyApplication.login_opt.progressMsg = progressMsg;
+			    	  
+			    	  dialog.setMessage(progressMsg);
+			    	  
+			    	  if(completed)
+			    		  dialog.completed();
+		    	  }
+	    	  }
+	    	  
+	    	  catch(Exception e)
+	    	  {
+	    		  Log.e("Exception", e.getMessage());
+	    	  }
 	      }
 	}
 	
@@ -154,6 +175,12 @@ public class LoginLogout extends SherlockActivity
 	@Override
 	public void onBackPressed() 
 	{
+    	if(MyApplication.login_opt != null)
+		{
+		    MyApplication.login_opt.cancel(true);
+		    MyApplication.login_opt = null;
+		}
+    	
 	    this.finish();
 	    overridePendingTransition(0, 0);
 	}
@@ -163,19 +190,24 @@ public class LoginLogout extends SherlockActivity
 	{
 	    super.onCreate(savedInstanceState);
 
+	    fragmentActivity = this;
 	    getSupportActionBar().setDisplayShowTitleEnabled(false);
 	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	    
 	    context = this;
-		settings = getSharedPreferences("euler", MODE_PRIVATE);
-        prefEditor = settings.edit();
+	    
+	    if(MyApplication.settings == null)
+	        MyApplication.settings = getSharedPreferences("euler", MODE_PRIVATE);
+	    
+	    if(MyApplication.prefEditor == null)
+	    	MyApplication.prefEditor = MyApplication.settings.edit();
 
-        if(settings.contains("username"))
+        if(MyApplication.settings.contains("username"))
         {
         	setContentView(R.layout.logout);
         	
         	TextView tv = (TextView)findViewById(R.id.textView1);
-        	tv.setText(settings.getString("username", "unknown"));
+        	tv.setText(MyApplication.settings.getString("username", "unknown"));
         	
         	Button b = (Button)findViewById(R.id.button1);
     	    b.setOnClickListener
@@ -187,8 +219,8 @@ public class LoginLogout extends SherlockActivity
     					{
     						MyApplication.myDbHelper.updateSolved();	
     						
-    						prefEditor.clear();
-    						prefEditor.commit();
+    						MyApplication.prefEditor.clear();
+    						MyApplication.prefEditor.commit();
     						
     						finish();
     						overridePendingTransition(0, 0);
@@ -215,10 +247,46 @@ public class LoginLogout extends SherlockActivity
     						String username = et1.getText().toString();
     						String password = et2.getText().toString();
     						
-    						new LongOperation().execute(new String[]{username, password});
+    						if(MyApplication.login_opt == null)
+    						{
+    						    MyApplication.login_opt = new LoginOperation(fragmentActivity);
+    						    MyApplication.login_opt.execute(new String[]{username, password});
+    						}
     					}
     				}
     	    );
         }
+	}
+
+	@Override
+	public void onDialogPositiveClick(DialogFragment dialog) 
+	{
+		MyApplication.prefEditor.commit();
+		
+		if(MyApplication.login_opt != null)
+		{
+		    MyApplication.login_opt.cancel(true);
+		    MyApplication.login_opt = null;
+		}
+		
+		finish();
+		overridePendingTransition(0, 0);
+	}
+
+	@Override
+	public void onDialogNegativeClick(DialogFragment dialog) 
+	{
+		if(MyApplication.login_opt != null)
+		{
+		    MyApplication.login_opt.cancel(true);
+		    MyApplication.login_opt = null;
+		}
+	}
+
+
+	@Override
+	public void solved() {
+		// TODO Auto-generated method stub
+		
 	}
 }

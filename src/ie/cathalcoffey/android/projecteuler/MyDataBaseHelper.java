@@ -155,7 +155,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 			if(cancel)
 				return;
 			
-			//myDataBase.beginTransaction();
+			myDataBase.beginTransaction();
 			
 			long last_updated = getLastModified(ep.id);
 			if(last_updated != -1)
@@ -241,8 +241,8 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 				}
 			}
 			
-		    //myDataBase.setTransactionSuccessful();
-	        //myDataBase.endTransaction();
+		    myDataBase.setTransactionSuccessful();
+	        myDataBase.endTransaction();
 		}
 	}
 

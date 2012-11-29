@@ -173,7 +173,7 @@ public class ProjectEulerClient
                 	return true;	
             	}
             	
-            	this.error = "Your username or password are incorrect";
+            	this.error = "Your username or password are incorrect.";
             	return false;	
             }
             

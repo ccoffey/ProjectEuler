@@ -64,6 +64,8 @@ public class SolvingDialogFragment extends DialogFragment {
             		
             		if(MyApplication.solve_opt.completed)
             			MyApplication.solve_opt.dialog.completed();
+            		else
+            			((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
             	}
         		
         		else

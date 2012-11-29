@@ -2,6 +2,7 @@ package ie.cathalcoffey.android.projecteuler;
 
 import java.util.Vector;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
@@ -15,15 +16,14 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.FilterQueryProvider;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
-import org.holoeverywhere.widget.ListView;
-import org.holoeverywhere.widget.TextView;
-import org.holoeverywhere.ArrayAdapter;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.widget.Spinner;
-
-public class ProblemList extends Activity implements SearchView.OnQueryTextListener
+public class ProblemList extends SherlockActivity implements SearchView.OnQueryTextListener
 {
 	private SimplerCursorAdapter cursorAdapter;
 	private SharedPreferences settings;
@@ -61,7 +61,7 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
         settings = getSharedPreferences("euler", MODE_PRIVATE);
 
         //Create the search view
-        SearchView searchView = new SearchView(getSupportActionBarContext());
+        SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setQueryHint("Search for problems…");
         searchView.setOnQueryTextListener(this);
         searchView.setSubmitButtonEnabled(false);
@@ -71,14 +71,14 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
             .setActionView(searchView)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         
-        spinner = new Spinner(getSupportActionBarContext());
+        spinner = new Spinner(getSupportActionBar().getThemedContext());
         spinner.setOnItemSelectedListener
         (
-        		new org.holoeverywhere.widget.AdapterView.OnItemSelectedListener()
+        		new OnItemSelectedListener()
         		{
 
 					@Override
-					public void onItemSelected(org.holoeverywhere.widget.AdapterView<?> parent, View view, int position, long id) 
+					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) 
 					{
 						MyApplication.display_text = parent.getItemAtPosition(position).toString();
 						
@@ -87,14 +87,14 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
 					}
 
 					@Override
-					public void onNothingSelected(org.holoeverywhere.widget.AdapterView<?> arg0) 
+					public void onNothingSelected(AdapterView<?> arg0) 
 					{
 						
 					}
 				}
         );
         
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getSupportActionBarContext(), R.layout.simple_spinner_dropdown_item, new String[]{"All", "Solved", "Unsolved"});
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getSupportActionBar().getThemedContext(), R.layout.simple_spinner_dropdown_item, new String[]{"All", "Solved", "Unsolved"});
         spinner.setAdapter(spinnerArrayAdapter);
         
         menu.add("Display")

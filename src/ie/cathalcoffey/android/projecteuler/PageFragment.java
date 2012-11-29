@@ -35,8 +35,6 @@ public class PageFragment extends Fragment
 	Context context;
 	MyApplication global;
 	
-	private SharedPreferences settings;
-	
     private static class LongOperation extends AsyncTask<String, Void, String> 
 	{	   
 		  String username, password, html;
@@ -222,12 +220,10 @@ public class PageFragment extends Fragment
          super.onCreate(savedInstanceState);
         
 	     context = getActivity();
-	     
-	     global = (MyApplication)getActivity().getApplication();
 			
-		 settings = context.getSharedPreferences("euler", Context.MODE_PRIVATE);
-         settings.edit();
-        
+ 	     if(MyApplication.settings == null)
+ 	    	MyApplication.settings = context.getSharedPreferences("euler", Context.MODE_PRIVATE);
+	    
          setRetainInstance(true);
     }
 	
@@ -292,8 +288,13 @@ public class PageFragment extends Fragment
 				
 				try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); };
 				
-			    ProjectEulerClient pec = global.pec;
-			    	    	        
+			    ProjectEulerClient pec = MyApplication.pec;
+			    if(MyApplication.pec == null)
+			    {
+			    	MyApplication.pec = new ProjectEulerClient();
+			    	pec = MyApplication.pec;
+			    }
+			         
 				this.progressMsg = "Login successful";
 				publishProgress();
 		    	
@@ -337,8 +338,8 @@ public class PageFragment extends Fragment
 	      @Override
 	      protected void onPostExecute(String result) 
 	      {     
-			  String username = settings.getString("username", "");
-			  String password = settings.getString("password", "");
+			  String username = MyApplication.settings.getString("username", "");
+			  String password = MyApplication.settings.getString("password", "");
 				
 			  img = (ImageView) solve.findViewById(R.id.imageView1);
 			  if(img != null)
