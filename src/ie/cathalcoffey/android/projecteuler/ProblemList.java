@@ -2,6 +2,7 @@ package ie.cathalcoffey.android.projecteuler;
 
 import java.util.Vector;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -23,13 +24,14 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class ProblemList extends SherlockActivity implements SearchView.OnQueryTextListener
+public class ProblemList extends SherlockActivity implements SearchView.OnQueryTextListener, ActionBar.OnNavigationListener
 {
 	private SimplerCursorAdapter cursorAdapter;
 	private SharedPreferences settings;
     private MenuItem loginlogout;
     private String queryText;
     private Spinner spinner;
+    private ArrayAdapter<String> spinnerArrayAdapter;
     
     @Override
 	public void onResume() 
@@ -62,7 +64,7 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
 
         //Create the search view
         SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
-        searchView.setQueryHint("Search for problems…");
+        searchView.setQueryHint("Search...");
         searchView.setOnQueryTextListener(this);
         searchView.setSubmitButtonEnabled(false);
         
@@ -72,35 +74,18 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         
         spinner = new Spinner(getSupportActionBar().getThemedContext());
-        spinner.setOnItemSelectedListener
+        spinnerArrayAdapter = new ArrayAdapter<String>
         (
-        		new OnItemSelectedListener()
-        		{
-
-					@Override
-					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) 
-					{
-						MyApplication.display_text = parent.getItemAtPosition(position).toString();
-						
-						Cursor c = MyApplication.myDbHelper.getData(MyApplication.filter_text);
-						cursorAdapter.changeCursor(c);
-					}
-
-					@Override
-					public void onNothingSelected(AdapterView<?> arg0) 
-					{
-						
-					}
-				}
+            getSupportActionBar().getThemedContext(), 
+            R.layout.sherlock_spinner_item, 
+            new String[]{"All", "Solved", "Unsolved"}
         );
-        
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getSupportActionBar().getThemedContext(), R.layout.simple_spinner_dropdown_item, new String[]{"All", "Solved", "Unsolved"});
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
         
-        menu.add("Display")
-            .setActionView(spinner)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        
+        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        getSupportActionBar().setListNavigationCallbacks(spinnerArrayAdapter, this);
+     
         if (settings.contains("username"))
         	loginlogout = menu.add("Logout");
         
@@ -231,5 +216,19 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
     	cursorAdapter.getFilter().filter("");
 
 		return true;
+	}
+
+	@Override
+	public boolean onNavigationItemSelected(int position, long itemId) 
+	{
+		if(spinnerArrayAdapter != null && spinnerArrayAdapter.getCount() >= position)
+		{
+		    MyApplication.display_text = spinnerArrayAdapter.getItem(position).toString();
+		
+		    Cursor c = MyApplication.myDbHelper.getData(MyApplication.filter_text);
+		    cursorAdapter.changeCursor(c);
+		}
+		
+		return false;
 	}
 }
