@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.widget.TextView;
 
 public class EulerActivity extends SherlockFragmentActivity implements SolvingDialogFragment.NoticeDialogListener
@@ -112,84 +113,104 @@ public class EulerActivity extends SherlockFragmentActivity implements SolvingDi
         try 
         {
     		Intent i = getIntent();
-    		Bundle extras = i.getExtras();
-    		if(extras != null)
+    		if(i != null)
     		{
-    			_id = extras.getLong("_id");
-    		    extras.getString("constraint");
-    		    MyApplication.display_text = extras.getString("displayText");
+	    		Bundle extras = i.getExtras();
+	    		if(extras != null)
+	    		{
+	    			if(extras.containsKey("_id") && extras.containsKey("displayText"))
+	    			{
+	    				_id = extras.getLong("_id");
+	    		        MyApplication.display_text = extras.getString("displayText");
+	    			}
+	    		}
     		}
-    	
-    		initialisePaging();
     		
+    		initialisePaging();
     		myOnPageSelected((int)_id);
  	    } 
         
         catch (Exception e) 
         {
- 		    throw new Error(e.getMessage());
+ 		    Log.e("BUG", e.getMessage());
  	    }
 	}
 
 	private void myOnPageSelected(int position) 
 	{
 		this.position = position;
-		PageFragment pf = (PageFragment)MyApplication.fragments.get(position);
-		Bundle b = pf.getArguments();
-		
-		TextView solved = (TextView)findViewById(R.id.solved);
-		solved.setText(b.getBoolean("solved") ? "Solved": "Unsolved");
-		
-		if (solve != null)
+		if(MyApplication.fragments != null && MyApplication.fragments.size() >= position)
 		{
-			if (pf.solving)
-        	    solve.setIcon(R.drawable.ic_read);
-        	else
-        		solve.setIcon(R.drawable.ic_solve);
+			PageFragment pf = (PageFragment)MyApplication.fragments.get(position);
+			Bundle b = pf.getArguments();
+			
+			if(b != null)
+			{
+				TextView solved = (TextView)findViewById(R.id.solved);
+				if(solved != null)
+				    solved.setText(b.getBoolean("solved") ? "Solved": "Unsolved");
+				
+				if (solve != null)
+				{
+					if (pf.solving)
+		        	    solve.setIcon(R.drawable.ic_read);
+		        	else
+		        		solve.setIcon(R.drawable.ic_solve);
+				}
+			}
 		}
 	}
 
 	private void initialisePaging() 
 	{				
-		this.mPagerAdapter  = new PagerAdapter(super.getSupportFragmentManager());
+		this.mPagerAdapter  = new PagerAdapter(getSupportFragmentManager());
 		
-		pager = (ViewPager)super.findViewById(R.id.viewpager);
-		pager.setAdapter(this.mPagerAdapter);
+		pager = (ViewPager)findViewById(R.id.viewpager);
+		if(pager != null)
+	        pager.setAdapter(mPagerAdapter);
 		
 		TitlePageIndicator titleIndicator = (TitlePageIndicator)findViewById(R.id.titles);
-		titleIndicator.setViewPager(pager);
+		if(titleIndicator != null)
+		{
+			titleIndicator.setViewPager(pager);
 		
-		titleIndicator.setOnPageChangeListener
-		( 
-				new OnPageChangeListener()
-				{
-					@Override
-					public void onPageScrollStateChanged(int arg0) 
+			titleIndicator.setOnPageChangeListener
+			( 
+					new OnPageChangeListener()
 					{
-
+						@Override
+						public void onPageScrollStateChanged(int arg0) 
+						{
+	
+						}
+	
+						@Override
+						public void onPageScrolled(int arg0, float arg1, int position) 
+						{
+	
+							
+						}
+	
+						@Override
+						public void onPageSelected(int position) 
+						{
+							myOnPageSelected(position);
+						}
 					}
-
-					@Override
-					public void onPageScrolled(int arg0, float arg1, int position) 
-					{
-
-						
-					}
-
-					@Override
-					public void onPageSelected(int position) 
-					{
-						myOnPageSelected(position);
-					}
-				}
-		);
+			);
+		}
 		
 		long _id = 0;
-		Bundle extras = getIntent().getExtras();
-	    if (extras != null) 
-	        _id = extras.getLong("_id");  
-	    
-		pager.setCurrentItem((int)_id);
+		Intent i = getIntent();
+		if(i != null)
+		{
+			Bundle extras = i.getExtras();
+		    if (extras != null) 
+		        _id = extras.getLong("_id");  
+		}
+		
+		if(pager != null)
+		    pager.setCurrentItem((int)_id);
 	}
 	
 	@Override

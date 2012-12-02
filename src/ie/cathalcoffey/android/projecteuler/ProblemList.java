@@ -32,6 +32,7 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
     private String queryText;
     private Spinner spinner;
     private ArrayAdapter<String> spinnerArrayAdapter;
+    private SearchView searchView;
     
     @Override
 	public void onResume() 
@@ -63,7 +64,7 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
         settings = getSharedPreferences("euler", MODE_PRIVATE);
 
         //Create the search view
-        SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
+        searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setQueryHint("Search...");
         searchView.setOnQueryTextListener(this);
         searchView.setSubmitButtonEnabled(false);
@@ -82,7 +83,7 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
         );
         spinnerArrayAdapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
-        
+          
         getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         getSupportActionBar().setListNavigationCallbacks(spinnerArrayAdapter, this);
      

@@ -27,6 +27,8 @@ public class PagerAdapter extends FragmentStatePagerAdapter
 	@Override
 	public int getCount() 
 	{
+		if(MyApplication.fragments == null)
+			return 0;
 		return MyApplication.fragments.size();
 	}
 }
