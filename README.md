@@ -21,4 +21,10 @@ This project aims to be backward compatible with Android 2.x and up, so it requi
 * ViewPagerIndicator: http://viewpagerindicator.com/
 * HoloEverywhere: https://github.com/ChristopheVersieux/HoloEverywhere
 
+Other projects by Cathal
+============
+
+For a list of my other projects, please see my website
+**http://cathalcoffey.ie/**
+
 [1]: http://dl.dropbox.com/u/11502389/pe.jpg
