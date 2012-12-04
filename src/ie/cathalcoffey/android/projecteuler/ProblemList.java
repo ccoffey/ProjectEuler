@@ -109,6 +109,12 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
 	}
 	
 	@Override
+	public void onPause()
+	{
+	    super.onPause();
+	}
+	
+	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
 	    super.onCreate(savedInstanceState);

@@ -1,13 +1,19 @@
 package ie.cathalcoffey.android.projecteuler;
 
+import java.util.Vector;
+
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -110,6 +116,7 @@ public class EulerActivity extends SherlockFragmentActivity implements SolvingDi
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	    
+	    String queryText = "";
         try 
         {
     		Intent i = getIntent();
@@ -118,12 +125,38 @@ public class EulerActivity extends SherlockFragmentActivity implements SolvingDi
 	    		Bundle extras = i.getExtras();
 	    		if(extras != null)
 	    		{
-	    			if(extras.containsKey("_id") && extras.containsKey("displayText"))
+	    			if(extras.containsKey("_id") && extras.containsKey("displayText") && extras.containsKey("constraint"))
 	    			{
 	    				_id = extras.getLong("_id");
 	    		        MyApplication.display_text = extras.getString("displayText");
+		    			queryText = extras.getString("constraint");
 	    			}
 	    		}
+    		}
+    		
+    		if(MyApplication.fragments == null)
+    		{
+    			MyApplication.myDbHelper = new MyDataBaseHelper(this);
+    		    MyApplication.myDbHelper.openDataBase(SQLiteDatabase.OPEN_READWRITE);
+    		    
+    			Cursor cursor = MyApplication.myDbHelper.getData(queryText);
+    			
+				MyApplication.fragments = new Vector<Fragment>();
+				while (cursor.moveToNext()) 
+				{
+				    long _id1 = cursor.getLong(0);
+				    String title = cursor.getString(1);
+				    long published = cursor.getLong(2);
+				    long updated = cursor.getLong(3);
+				    long solvedby = cursor.getLong(4);
+				    boolean solved = cursor.getLong(5) == 1 ? true: false;
+				    String html = cursor.getString(6);
+				    String answer = cursor.getString(7);
+				    
+				    MyApplication.fragments.add(PageFragment.newInstance(_id1, title, published, updated, solvedby, solved, html, answer));
+				}
+				
+    			cursor.close();
     		}
     		
     		initialisePaging();
@@ -198,15 +231,6 @@ public class EulerActivity extends SherlockFragmentActivity implements SolvingDi
 						}
 					}
 			);
-		}
-		
-		long _id = 0;
-		Intent i = getIntent();
-		if(i != null)
-		{
-			Bundle extras = i.getExtras();
-		    if (extras != null) 
-		        _id = extras.getLong("_id");  
 		}
 		
 		if(pager != null)
