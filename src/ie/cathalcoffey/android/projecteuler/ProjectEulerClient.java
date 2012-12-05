@@ -78,6 +78,9 @@ public class ProjectEulerClient
 	}
 	
 	private HttpClient httpclient;
+	public HttpGet httpget;
+	public HttpPost httppost;
+	
 	private String error;
 	private String logout_url = null;
 	String solve_msg;
@@ -85,13 +88,14 @@ public class ProjectEulerClient
 	ProjectEulerClient()
 	{
 		this.httpclient = new DefaultHttpClient();
+		
 	}
 	
 	Drawable loadImageFromWeb(String url)
     {
         try
         {
-        	HttpGet httpget = new HttpGet(url);
+        	httpget = new HttpGet(url);
     		HttpResponse response = httpclient.execute(httpget);
             HttpEntity responseEntity = response.getEntity();
             
@@ -107,7 +111,7 @@ public class ProjectEulerClient
 	
 	boolean solve(String id, String guess, String confirm) throws ClientProtocolException, IOException
 	{
-		HttpPost httppost = new HttpPost("http://projecteuler.net/problem=" + id);
+		httppost = new HttpPost("http://projecteuler.net/problem=" + id);
 
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("guess", guess));
@@ -147,7 +151,7 @@ public class ProjectEulerClient
 	
 	boolean login(String username, String password) throws ClientProtocolException, IOException
 	{	    
-	    HttpPost httppost = new HttpPost("http://projecteuler.net/login");
+	    httppost = new HttpPost("http://projecteuler.net/login");
 
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("username", username));
@@ -274,7 +278,7 @@ public class ProjectEulerClient
 	{
 		String content = null;
 		
-		HttpGet httpget = new HttpGet(url);
+		httpget = new HttpGet(url);
 		HttpResponse response = httpclient.execute(httpget);
         HttpEntity responseEntity = response.getEntity();
         

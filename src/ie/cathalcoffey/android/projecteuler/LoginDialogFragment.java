@@ -86,7 +86,6 @@ public class LoginDialogFragment extends DialogFragment {
     public interface NoticeDialogListener {
         public void onDialogPositiveClick(DialogFragment dialog);
         public void onDialogNegativeClick(DialogFragment dialog);
-        public void solved();
     }
     
     // Use this instance of the interface to deliver action events
@@ -135,7 +134,6 @@ public class LoginDialogFragment extends DialogFragment {
 		    	if(MyApplication.login_opt.success)
 		    	{
 		    		correct_wrong.setImageResource(R.drawable.answer_correct);
-		    		mListener.solved();
 		    	}
 		    	correct_wrong.setVisibility(View.VISIBLE);
 			}

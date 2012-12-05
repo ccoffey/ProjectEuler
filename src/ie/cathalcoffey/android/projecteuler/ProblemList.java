@@ -8,12 +8,19 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -27,42 +34,15 @@ import android.widget.TextView;
 public class ProblemList extends SherlockActivity implements SearchView.OnQueryTextListener, ActionBar.OnNavigationListener
 {
 	private SimplerCursorAdapter cursorAdapter;
-	private SharedPreferences settings;
     private MenuItem loginlogout;
     private String queryText;
     private Spinner spinner;
     private ArrayAdapter<String> spinnerArrayAdapter;
     private SearchView searchView;
-    
-    @Override
-	public void onResume() 
-	{
-	    super.onResume();
-	    
-	    if(loginlogout != null)
-	    {
-		    if (settings.contains("username"))
-	        	loginlogout.setTitle("Logout");
-	        else
-	        	loginlogout.setTitle("Login");
-	    }
-	    
-	    TextView solved = (TextView)findViewById(R.id.solved);
-	    
-	    int[] counts = {0, 0};
-	    if(MyApplication.myDbHelper != null)
-	    	counts = MyApplication.myDbHelper.getSolvedCount();
-	    
-	    solved.setText(String.format("Solved %d of %d", counts[0], counts[1]));
-	    
-    	cursorAdapter.getFilter().filter("");
-	}
 	
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) 
 	{
-        settings = getSharedPreferences("euler", MODE_PRIVATE);
-
         //Create the search view
         searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setQueryHint("Search...");
@@ -87,7 +67,13 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
         getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         getSupportActionBar().setListNavigationCallbacks(spinnerArrayAdapter, this);
      
-        if (settings.contains("username"))
+        Intent settings = new Intent(this, Settings.class);
+        settings.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        menu.add("Settings")
+            .setIntent(settings)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        
+        if (MyApplication.settings.contains("username"))
         	loginlogout = menu.add("Logout");
         
         else
@@ -97,7 +83,7 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         loginlogout.setIntent(intent);
         loginlogout.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);	
-            
+        
         return true;
     }
 	
@@ -108,16 +94,69 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
 	    overridePendingTransition(0, 0);
 	}
 	
+	Receiver receiver;
+	
+    @Override
+	public void onResume() 
+	{
+	    super.onResume();
+	    
+	    LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("UPDATE_COMPLETE"));
+	    
+	    if(loginlogout != null)
+	    {
+		    if (MyApplication.settings.contains("username"))
+	        	loginlogout.setTitle("Logout");
+	        else
+	        	loginlogout.setTitle("Login");
+	    }
+	    
+	    TextView solved = (TextView)findViewById(R.id.solved);
+	    
+	    int[] counts = {0, 0};
+	    if(MyApplication.myDbHelper != null)
+	    	counts = MyApplication.myDbHelper.getSolvedCount();
+	    
+	    solved.setText(String.format("Solved %d of %d", counts[0], counts[1]));
+	    
+    	cursorAdapter.getFilter().filter("");
+	}
+	
 	@Override
 	public void onPause()
 	{
 	    super.onPause();
+	    
+	    LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+	}
+	
+	private class Receiver extends BroadcastReceiver 
+	{
+		 @Override
+		 public void onReceive(Context arg0, Intent arg1) 
+		 {
+             onResume();
+		 }
 	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
 	    super.onCreate(savedInstanceState);
+	    
+	    receiver = new Receiver();
+	    
+	    if(MyApplication.settings == null)
+	        MyApplication.settings = getSharedPreferences("euler", MODE_PRIVATE);
+	    
+	    if(MyApplication.prefEditor == null)
+	        MyApplication.prefEditor = MyApplication.settings.edit();
+	    
+	    if(MyApplication.myDbHelper == null)
+	    {
+	        MyApplication.myDbHelper = new MyDataBaseHelper(this);
+	        MyApplication.myDbHelper.openDataBase(SQLiteDatabase.OPEN_READWRITE);
+	    }
 	    
 	    getSupportActionBar().setDisplayShowTitleEnabled(false); 
 	    
@@ -127,9 +166,6 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
 	    
 	    list.setTextFilterEnabled(true);
 	    list.setFastScrollEnabled(true);
-	    
-	    MyApplication.myDbHelper = new MyDataBaseHelper(this);
-	    MyApplication.myDbHelper.openDataBase(SQLiteDatabase.OPEN_READWRITE);
 	    
         try 
         {
@@ -162,7 +198,7 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
     		    			
     		    			Bundle bundle = new Bundle();
     		    			bundle.putLong("_id", position);
-    		    		    bundle.putString("displayText", spinner.getSelectedItem().toString());
+    		    		    bundle.putString("displayText", MyApplication.display_text);
     		    			bundle.putString("constraint", queryText);
     		    			intent.putExtras(bundle);
     		    			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -200,6 +236,13 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
         {
  		    throw new Error("Unable to create database");
  	    }
+        
+        if(!ExampleService.isRunning(this) && MyApplication.settings != null && MyApplication.settings.getBoolean("autoUpdate", true) && MyApplication.settings.contains("username"))
+        {
+	        Intent serviceIntent = new Intent(ExampleService.ACTION_FOREGROUND);
+			serviceIntent.setClass(this, ExampleService.class);
+	        startService(serviceIntent);
+        }
 	}
 
 	@Override

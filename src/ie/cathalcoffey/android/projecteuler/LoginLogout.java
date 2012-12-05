@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -15,6 +16,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -56,18 +58,13 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
 	    	    String username = params[0];
 				String password = params[1];
 				
-			    ProjectEulerClient pec = MyApplication.pec;
-			    if(MyApplication.pec == null)
-			    {
-			    	MyApplication.pec = new ProjectEulerClient();
-			    	pec = MyApplication.pec;
-			    }
-			    
+				MyApplication.pec = new ProjectEulerClient();
+				
 			    try 
 			    {
-					if(pec.login(username, password))
+					if(MyApplication.pec.login(username, password))
 					{
-						EulerProfile ep = pec.getProfile();
+						EulerProfile ep = MyApplication.pec.getProfile();
 						
 						MyApplication.prefEditor.putString("username", username);
 						MyApplication.prefEditor.putString("password", password);
@@ -87,9 +84,9 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
 						
 						try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); };
 						
-						ArrayList<EulerProblem> problems = pec.getProblems();
+						ArrayList<EulerProblem> problems = MyApplication.pec.getProblems();
 					
-						MyApplication.myDbHelper.updateProblems(pec, problems, false);	
+						MyApplication.myDbHelper.updateProblems(MyApplication.pec, problems, false);	
 						
 						success = true;
 						completed = true;
@@ -102,7 +99,7 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
 					
 					else
 					{
-						this.progressMsg = pec.getError();
+						this.progressMsg = MyApplication.pec.getError();
 						completed = true;
 						
 						publishProgress();
@@ -200,7 +197,13 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
 	        MyApplication.settings = getSharedPreferences("euler", MODE_PRIVATE);
 	    
 	    if(MyApplication.prefEditor == null)
-	    	MyApplication.prefEditor = MyApplication.settings.edit();
+	        MyApplication.prefEditor = MyApplication.settings.edit();
+	    
+	    if(MyApplication.myDbHelper == null)
+	    {
+	        MyApplication.myDbHelper = new MyDataBaseHelper(this);
+	        MyApplication.myDbHelper.openDataBase(SQLiteDatabase.OPEN_READWRITE);
+	    }
 
         if(MyApplication.settings.contains("username"))
         {
@@ -217,7 +220,15 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
     					@Override
     					public void onClick(View v) 
     					{
-    						MyApplication.myDbHelper.updateSolved();	
+    						MyApplication.cancelUpdater = true;
+    						
+    						MyApplication.pec.httppost.abort();
+    						MyApplication.pec.httpget.abort();
+    						
+    						MyApplication.myDbHelper.updateSolved();
+    						
+    						MyApplication.settings = getSharedPreferences("euler", MODE_PRIVATE);
+    						MyApplication.prefEditor = MyApplication.settings.edit();
     						
     						MyApplication.prefEditor.clear();
     						MyApplication.prefEditor.commit();
@@ -263,11 +274,20 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
 	{
 		MyApplication.prefEditor.commit();
 		
+        if(!ExampleService.isRunning(this))
+        {
+	        Intent serviceIntent = new Intent(ExampleService.ACTION_FOREGROUND);
+			serviceIntent.setClass(this, ExampleService.class);
+	        startService(serviceIntent);
+        }	
+        
 		if(MyApplication.login_opt != null)
 		{
 		    MyApplication.login_opt.cancel(true);
 		    MyApplication.login_opt = null;
 		}
+		
+		MyApplication.cancelUpdater = false;
 		
 		finish();
 		overridePendingTransition(0, 0);
@@ -281,12 +301,5 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
 		    MyApplication.login_opt.cancel(true);
 		    MyApplication.login_opt = null;
 		}
-	}
-
-
-	@Override
-	public void solved() {
-		// TODO Auto-generated method stub
-		
 	}
 }

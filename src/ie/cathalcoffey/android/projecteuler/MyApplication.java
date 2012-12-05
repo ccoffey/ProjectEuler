@@ -25,6 +25,7 @@ public class MyApplication extends Application
 	
 	static SolveOperation solve_opt;
 	static LoginOperation login_opt;
+	protected static boolean cancelUpdater;
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) 

@@ -16,13 +16,18 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class MyDataBaseHelper extends SQLiteOpenHelper
@@ -127,9 +132,6 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
     @Override
 	public synchronized void close() 
     {
-    	if(myDataBase != null && myDataBase.isOpen())
-    		myDataBase.close();
- 
     	super.close();
 	}
  
@@ -145,13 +147,37 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
  
 	}
 
-	public void updateProblems(ProjectEulerClient pec, ArrayList<EulerProblem> problems, boolean install) 
+	public synchronized void updateProblems(ProjectEulerClient pec, ArrayList<EulerProblem> problems, boolean install) 
 	{
-		int newProblems = 0;
-		int updatedProblems = 0;
-		
 		for(EulerProblem ep : problems)
 		{
+			if(MyApplication.cancelUpdater)
+			{
+				return;
+			}
+			
+			if(install)
+			{
+				NotificationManager notificationManager = (NotificationManager)context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+				
+				NotificationCompat.Builder builder = new  NotificationCompat.Builder(context);
+			    
+				Intent intent = new Intent(context, ProblemList.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT );
+
+				builder.setContentIntent(contentIntent)
+			    .setSmallIcon(R.drawable.ic_notification)
+			    .setWhen(System.currentTimeMillis())
+			    .setAutoCancel(true)
+			    .setContentTitle("Updating problem set")
+			    .setContentText("Updating problem: " + ep.id + " of " + problems.size());
+				Notification notification = builder.build();
+				notification.flags |= Notification.FLAG_AUTO_CANCEL;	
+				
+				notificationManager.notify(1, notification);
+			}
+			
 			if(cancel)
 				return;
 			
@@ -170,8 +196,6 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 					args.put("published", ep.date_published);
 					args.put("updated", ep.date_last_update);
 				    args.put("answer", ep.answer);
-				    
-				    updatedProblems += 1;
 			    }
 			    
 				myDataBase.update("data", args, "_id = ?", new String[]{"" + ep.id});
@@ -180,7 +204,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 			else
 			{
 				if(install)
-				{
+				{	
 					ContentValues args = new ContentValues();
 					args.put("_id", ep.id);
 					args.put("title", ep.description);
@@ -224,8 +248,6 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 						}
 						
 					    args.put("html", html);
-					    
-					    newProblems += 1;
 					} 
 					
 					catch (Exception e)
@@ -259,7 +281,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 	   return lastModified;
 	}
 	
-	public void solve(String id) 
+	public synchronized void solve(String id) 
 	{
 		myDataBase.beginTransaction();
 		
@@ -272,7 +294,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 		myDataBase.endTransaction();
 	}
 	
-	public void updateSolved() 
+	public synchronized void updateSolved() 
 	{
         myDataBase.beginTransaction();
 		

@@ -7,7 +7,10 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TitlePageIndicator;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,6 +18,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
@@ -22,11 +26,13 @@ import android.widget.TextView;
 
 public class EulerActivity extends SherlockFragmentActivity implements SolvingDialogFragment.NoticeDialogListener
 {
+	private TitlePageIndicator titleIndicator;
 	private FragmentStatePagerAdapter mPagerAdapter;
     private ViewPager pager;
     private MenuItem solve;
     private long _id = 0;
 	private int position;
+	private String queryText;
 	
     @Override
 	public void onSaveInstanceState(Bundle outState) 
@@ -86,7 +92,38 @@ public class EulerActivity extends SherlockFragmentActivity implements SolvingDi
     protected void onResume()
     {
     	super.onResume();
+    	
+    	LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("UPDATE_COMPLETE"));
     }
+    
+    private class Receiver extends BroadcastReceiver 
+	{
+		 @Override
+		 public void onReceive(Context arg0, Intent arg1) 
+		 {
+             Cursor cursor = MyApplication.myDbHelper.getData(queryText);
+			
+			 MyApplication.fragments = new Vector<Fragment>();
+			 while (cursor.moveToNext()) 
+			 {
+			     long _id1 = cursor.getLong(0);
+			     String title = cursor.getString(1);
+			     long published = cursor.getLong(2);
+			     long updated = cursor.getLong(3);
+			     long solvedby = cursor.getLong(4);
+			     boolean solved = cursor.getLong(5) == 1 ? true: false;
+			     String html = cursor.getString(6);
+			     String answer = cursor.getString(7);
+			    
+			     MyApplication.fragments.add(PageFragment.newInstance(_id1, title, published, updated, solvedby, solved, html, answer));
+			 }
+			
+			 cursor.close();
+			
+			 titleIndicator.notifyDataSetChanged(); 
+			 myOnPageSelected((int)_id);
+		 }
+	}
     
 	@Override
 	public void onDestroy()
@@ -107,16 +144,19 @@ public class EulerActivity extends SherlockFragmentActivity implements SolvingDi
 	    overridePendingTransition(0, 0);
 	}
 	
+	Receiver receiver;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager_layout);
 		
+		receiver = new Receiver();
+	    
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	    
-	    String queryText = "";
         try 
         {
     		Intent i = getIntent();
@@ -134,11 +174,20 @@ public class EulerActivity extends SherlockFragmentActivity implements SolvingDi
 	    		}
     		}
     		
+    	    if(MyApplication.settings == null)
+    	        MyApplication.settings = getSharedPreferences("euler", MODE_PRIVATE);
+    	    
+    	    if(MyApplication.prefEditor == null)
+    	        MyApplication.prefEditor = MyApplication.settings.edit();
+    	    
+    	    if(MyApplication.myDbHelper == null)
+    	    {
+    	        MyApplication.myDbHelper = new MyDataBaseHelper(this);
+    	        MyApplication.myDbHelper.openDataBase(SQLiteDatabase.OPEN_READWRITE);
+    	    }
+    	    
     		if(MyApplication.fragments == null)
     		{
-    			MyApplication.myDbHelper = new MyDataBaseHelper(this);
-    		    MyApplication.myDbHelper.openDataBase(SQLiteDatabase.OPEN_READWRITE);
-    		    
     			Cursor cursor = MyApplication.myDbHelper.getData(queryText);
     			
 				MyApplication.fragments = new Vector<Fragment>();
@@ -202,7 +251,7 @@ public class EulerActivity extends SherlockFragmentActivity implements SolvingDi
 		if(pager != null)
 	        pager.setAdapter(mPagerAdapter);
 		
-		TitlePageIndicator titleIndicator = (TitlePageIndicator)findViewById(R.id.titles);
+		titleIndicator = (TitlePageIndicator)findViewById(R.id.titles);
 		if(titleIndicator != null)
 		{
 			titleIndicator.setViewPager(pager);
