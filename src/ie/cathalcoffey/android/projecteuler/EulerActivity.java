@@ -103,9 +103,15 @@ public class EulerActivity extends Activity implements SolvingDialogFragment.Not
 		 @Override
 		 public void onReceive(Context arg0, Intent arg1) 
 		 {
+		     int last_id = 1;
+		     if(MyApplication.fragments.size() > 0)
+		     {
+		    	 PageFragment pf = (PageFragment)MyApplication.fragments.lastElement();
+		    	 last_id = (int)pf.getArguments().getLong("_id");
+		     }
+		     
              Cursor cursor = MyApplication.myDbHelper.getData(queryText);
 			
-			 MyApplication.fragments = new Vector<Fragment>();
 			 while (cursor.moveToNext()) 
 			 {
 			     long _id1 = cursor.getLong(0);
@@ -117,12 +123,16 @@ public class EulerActivity extends Activity implements SolvingDialogFragment.Not
 			     String html = cursor.getString(6);
 			     String answer = cursor.getString(7);
 			    
-			     MyApplication.fragments.add(PageFragment.newInstance(_id1, title, published, updated, solvedby, solved, html, answer));
+			     if((int)_id1 > last_id)
+			     {
+			         MyApplication.fragments.add(PageFragment.newInstance(_id1, title, published, updated, solvedby, solved, html, answer));
+			         last_id = (int)_id1;
+			     }
 			 }
 			
 			 cursor.close();
 			
-			 titleIndicator.notifyDataSetChanged(); 
+			 titleIndicator.notifyDataSetChanged();
 			 myOnPageSelected((int)_id);
 		 }
 	}

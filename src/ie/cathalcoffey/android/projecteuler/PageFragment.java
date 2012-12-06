@@ -226,8 +226,6 @@ public class PageFragment extends Fragment
 			
  	     if(MyApplication.settings == null)
  	    	MyApplication.settings = (SharedPreferences) context.getSharedPreferences("euler", Context.MODE_PRIVATE);
-	    
-         setRetainInstance(true);
     }
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 

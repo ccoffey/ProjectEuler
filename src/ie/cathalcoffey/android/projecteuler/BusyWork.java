@@ -22,7 +22,7 @@ import android.support.v4.content.LocalBroadcastManager;
 public class BusyWork extends AsyncTask<String, Void, Void>
 {
 	ExampleService context;
-	
+	ArrayList<Long> installed;
 	BusyWork(ExampleService context)
 	{
 		this.context = context;
