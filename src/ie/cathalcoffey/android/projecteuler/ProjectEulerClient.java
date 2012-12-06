@@ -160,6 +160,17 @@ public class ProjectEulerClient
             
             if(doc.title().contains("Project Euler"))
             {
+
+            	Elements h2s = doc.select("h2");
+            	for(Element h2 : h2s)
+            	{
+            		if(h2.text().toLowerCase().contains("email address validation"))
+            		{
+            			this.error = "You have not validated your email address yet. Please visit http://projecteuler.net";
+            			return false;
+            		}
+            	}
+            		
             	Elements elms = doc.select("a[title=Logout]");
             	if (elms.size() > 0)
             	{
