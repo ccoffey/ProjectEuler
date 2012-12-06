@@ -5,11 +5,11 @@ import ie.cathalcoffey.android.projecteuler.PageFragment.SolveOperation;
 
 import java.util.Vector;
 
-import android.app.Application;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import org.holoeverywhere.app.Application;
+import org.holoeverywhere.app.Fragment;
+import org.holoeverywhere.preference.SharedPreferences;
+
 import android.content.res.Configuration;
-import android.support.v4.app.Fragment;
 
 public class MyApplication extends Application 
 {

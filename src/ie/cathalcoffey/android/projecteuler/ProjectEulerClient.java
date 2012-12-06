@@ -1,12 +1,6 @@
 package ie.cathalcoffey.android.projecteuler;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +21,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 public class ProjectEulerClient 
 {
@@ -87,8 +79,8 @@ public class ProjectEulerClient
 	
 	ProjectEulerClient()
 	{
-		this.httpclient = new DefaultHttpClient();
-		
+		httpclient = new DefaultHttpClient();
+		httpclient.getParams().setParameter("http.protocol.expect-continue", false);
 	}
 	
 	Drawable loadImageFromWeb(String url)

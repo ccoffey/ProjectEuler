@@ -2,7 +2,11 @@ package ie.cathalcoffey.android.projecteuler;
 
 import java.util.Vector;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.DialogFragment;
+import org.holoeverywhere.app.Fragment;
+import org.holoeverywhere.widget.TextView;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -11,20 +15,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
-import android.widget.TextView;
 
-public class EulerActivity extends SherlockFragmentActivity implements SolvingDialogFragment.NoticeDialogListener
+import android.util.Log;
+
+public class EulerActivity extends Activity implements SolvingDialogFragment.NoticeDialogListener
 {
 	private TitlePageIndicator titleIndicator;
 	private FragmentStatePagerAdapter mPagerAdapter;

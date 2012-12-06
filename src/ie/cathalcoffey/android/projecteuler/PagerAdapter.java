@@ -1,6 +1,6 @@
 package ie.cathalcoffey.android.projecteuler;
 
-import android.support.v4.app.Fragment;
+import org.holoeverywhere.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 

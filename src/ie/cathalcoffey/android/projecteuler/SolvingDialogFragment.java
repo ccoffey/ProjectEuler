@@ -1,20 +1,20 @@
 package ie.cathalcoffey.android.projecteuler;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.app.Dialog;
+import org.holoeverywhere.app.DialogFragment;
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.ProgressBar;
+import org.holoeverywhere.widget.TextView;
+
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnShowListener;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 public class SolvingDialogFragment extends DialogFragment {
     @Override
@@ -140,11 +140,11 @@ public class SolvingDialogFragment extends DialogFragment {
 		    	correct_wrong.setVisibility(View.VISIBLE);
 			}
 		    
-			Button b1 = d.getButton(AlertDialog.BUTTON_POSITIVE);
+			Button b1 = (Button) d.getButton(AlertDialog.BUTTON_POSITIVE);
 			if(b1 !=null)
 				b1.setEnabled(true);
 			
-			Button b2 = d.getButton(AlertDialog.BUTTON_NEGATIVE);
+			Button b2 = (Button) d.getButton(AlertDialog.BUTTON_NEGATIVE);
 			if(b2 !=null)
 			    b2.setEnabled(false);
 		}

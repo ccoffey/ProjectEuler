@@ -3,37 +3,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.DialogFragment;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 
-import ie.cathalcoffey.android.projecteuler.PageFragment.SolveOperation;
 import ie.cathalcoffey.android.projecteuler.ProjectEulerClient.EulerProblem;
 import ie.cathalcoffey.android.projecteuler.ProjectEulerClient.EulerProfile;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
-public class LoginLogout extends SherlockFragmentActivity implements LoginDialogFragment.NoticeDialogListener
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.EditText;
+import org.holoeverywhere.widget.TextView;
+
+public class LoginLogout extends Activity implements LoginDialogFragment.NoticeDialogListener
 {
-	FragmentActivity fragmentActivity;
+	Activity fragmentActivity;
 	Context context;
     
 	public class LoginOperation extends AsyncTask<String, Void, String> 
@@ -43,7 +35,7 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
 		  boolean success;
 		  boolean completed;
 		   
-		  public LoginOperation(FragmentActivity fragmentActivity)
+		  public LoginOperation(Activity fragmentActivity)
 		  {
 			  dialog = new LoginDialogFragment();
 			  dialog.setCancelable(false);
@@ -140,7 +132,8 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
 	    	  {
 		    	  if(dialog != null)
 		    	  {  
-			    	  MyApplication.login_opt.progressMsg = progressMsg;
+			    	  if(MyApplication.login_opt != null)
+		    		      MyApplication.login_opt.progressMsg = progressMsg;
 			    	  
 			    	  dialog.setMessage(progressMsg);
 			    	  
@@ -222,8 +215,14 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
     					{
     						MyApplication.cancelUpdater = true;
     						
-    						MyApplication.pec.httppost.abort();
-    						MyApplication.pec.httpget.abort();
+    						if(MyApplication.pec != null)
+    						{
+    							if(MyApplication.pec.httppost != null)
+    							    MyApplication.pec.httppost.abort();
+    							
+    							if(MyApplication.pec.httpget != null)
+    						        MyApplication.pec.httpget.abort();
+    						}
     						
     						MyApplication.myDbHelper.updateSolved();
     						
@@ -272,25 +271,28 @@ public class LoginLogout extends SherlockFragmentActivity implements LoginDialog
 	@Override
 	public void onDialogPositiveClick(DialogFragment dialog) 
 	{
-		MyApplication.prefEditor.commit();
+		if(MyApplication.login_opt.success)
+		{
+			MyApplication.prefEditor.commit();
+			
+	        if(!ExampleService.isRunning(this))
+	        {
+		        Intent serviceIntent = new Intent(ExampleService.ACTION_FOREGROUND);
+				serviceIntent.setClass(this, ExampleService.class);
+		        startService(serviceIntent);
+	        }
+			
+			MyApplication.cancelUpdater = false;
+			
+			finish();
+			overridePendingTransition(0, 0);
+		}
 		
-        if(!ExampleService.isRunning(this))
-        {
-	        Intent serviceIntent = new Intent(ExampleService.ACTION_FOREGROUND);
-			serviceIntent.setClass(this, ExampleService.class);
-	        startService(serviceIntent);
-        }	
-        
 		if(MyApplication.login_opt != null)
 		{
 		    MyApplication.login_opt.cancel(true);
 		    MyApplication.login_opt = null;
 		}
-		
-		MyApplication.cancelUpdater = false;
-		
-		finish();
-		overridePendingTransition(0, 0);
 	}
 
 	@Override

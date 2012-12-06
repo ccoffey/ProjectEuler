@@ -6,26 +6,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.http.client.ClientProtocolException;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Fragment;
+import org.holoeverywhere.preference.SharedPreferences;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.Button;
+
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.EditText;
+
 import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.TextView;
+import org.holoeverywhere.widget.TextView;
 
 public class PageFragment extends Fragment 
 {
@@ -39,9 +42,9 @@ public class PageFragment extends Fragment
 	{	   
 		  String username, password, html;
 		  Drawable drawable;
-		  FragmentActivity fragmentActivity;
+		  Activity fragmentActivity;
 		  
-		  public LongOperation(FragmentActivity fragmentActivity)
+		  public LongOperation(Activity fragmentActivity)
 		  {
 			  this.fragmentActivity = fragmentActivity;
 		  }
@@ -172,7 +175,7 @@ public class PageFragment extends Fragment
 				
 				else
 				{
-					SharedPreferences settings = this.getActivity().getSharedPreferences("euler", this.getActivity().MODE_PRIVATE);
+					SharedPreferences settings = (SharedPreferences) this.getActivity().getSharedPreferences("euler", this.getActivity().MODE_PRIVATE);
 					
 					if(!settings.contains("username"))
 					{
@@ -190,7 +193,7 @@ public class PageFragment extends Fragment
 					{	
 						String username = settings.getString("username", "");
 						String password = settings.getString("password", "");
-						new LongOperation(getActivity()).execute(new String[]{username, password, html});
+						new LongOperation((Activity) getActivity()).execute(new String[]{username, password, html});
 						
 						webView1.setVisibility(View.GONE);
 						solve.setVisibility(View.VISIBLE);						
@@ -222,7 +225,7 @@ public class PageFragment extends Fragment
 	     context = getActivity();
 			
  	     if(MyApplication.settings == null)
- 	    	MyApplication.settings = context.getSharedPreferences("euler", Context.MODE_PRIVATE);
+ 	    	MyApplication.settings = (SharedPreferences) context.getSharedPreferences("euler", Context.MODE_PRIVATE);
 	    
          setRetainInstance(true);
     }
@@ -240,13 +243,13 @@ public class PageFragment extends Fragment
 					public void onClick(View v) 
 					{
 						long _id = getArguments().getLong("_id");
-						TextView textView_guess = (TextView)view.findViewById(R.id.guess);
-						TextView textView_confirm = (TextView)view.findViewById(R.id.confirm);
+						EditText editText_guess = (EditText)view.findViewById(R.id.guess);
+						EditText editText_confirm = (EditText)view.findViewById(R.id.confirm);
 						
 						if(MyApplication.solve_opt == null)
 						{
-						    MyApplication.solve_opt = new SolveOperation(getActivity());
-						    MyApplication.solve_opt.execute(new String[]{"" + _id, textView_guess.getText().toString(), textView_confirm.getText().toString(), html});
+						    MyApplication.solve_opt = new SolveOperation((Activity) getActivity());
+						    MyApplication.solve_opt.execute(new String[]{"" + _id, editText_guess.getText().toString(), editText_confirm.getText().toString(), html});
 						}
 					}
 				}
@@ -263,11 +266,11 @@ public class PageFragment extends Fragment
 		  String progressMsg;
 		  boolean success;
 		  boolean completed;
-		  FragmentActivity fragmentActivity;
+		  Activity fragmentActivity;
 		  String id;
 		  String html;
 		  
-		  public SolveOperation(FragmentActivity fragmentActivity)
+		  public SolveOperation(Activity fragmentActivity)
 		  {
 			  this.fragmentActivity = fragmentActivity;
 			  

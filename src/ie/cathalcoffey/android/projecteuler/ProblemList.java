@@ -2,8 +2,10 @@ package ie.cathalcoffey.android.projecteuler;
 
 import java.util.Vector;
 
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Fragment;
+
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
@@ -12,26 +14,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
+
+import org.holoeverywhere.widget.AdapterView;
+import org.holoeverywhere.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.FilterQueryProvider;
-import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
-public class ProblemList extends SherlockActivity implements SearchView.OnQueryTextListener, ActionBar.OnNavigationListener
+import org.holoeverywhere.widget.ListView;
+import org.holoeverywhere.widget.Spinner;
+import org.holoeverywhere.widget.TextView;
+
+public class ProblemList extends Activity implements SearchView.OnQueryTextListener, ActionBar.OnNavigationListener
 {
 	private SimplerCursorAdapter cursorAdapter;
     private MenuItem loginlogout;
@@ -190,9 +188,9 @@ public class ProblemList extends SherlockActivity implements SearchView.OnQueryT
     		
     		list.setOnItemClickListener
     		(
-    				new OnItemClickListener() 
+    				new android.widget.AdapterView.OnItemClickListener() 
     				{
-						public void onItemClick(AdapterView<?> arg0, View v, int position, long  _id) 
+						public void onItemClick(android.widget.AdapterView<?> arg0, View v, int position, long  _id) 
 						{
 							Intent intent = new Intent(getApplicationContext(), EulerActivity.class);
     		    			

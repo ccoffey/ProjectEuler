@@ -7,6 +7,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import ie.cathalcoffey.android.projecteuler.ProjectEulerClient.EulerProblem;
 import ie.cathalcoffey.android.projecteuler.ProjectEulerClient.EulerProfile;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;

@@ -30,22 +30,11 @@
     	    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content" >
 	    	<TextView 
+	    	    android:id="@+id/solved_by"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textStyle="italic"
-				android:text="Solved by "/>
-		    <TextView 
-		        android:id="@+id/solved_by"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textStyle="italic"
-				android:text="100,000"/>
-		    <TextView 
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textStyle="italic"
-				android:paddingLeft="1dip"
-				android:text=" Eulerians"/>
+				android:text="Solved by n Eulerians"/>
 	    </LinearLayout>
 	<TextView 
         android:id="@+id/title"

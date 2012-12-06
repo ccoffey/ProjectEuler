@@ -1,17 +1,16 @@
 package ie.cathalcoffey.android.projecteuler;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.preference.SharedPreferences;
+import org.holoeverywhere.widget.ToggleButton;
+
 import com.actionbarsherlock.view.MenuItem;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ToggleButton;
 
-public class Settings extends SherlockActivity 
+public class Settings extends Activity 
 {
 	@Override
 	public void onResume() 
