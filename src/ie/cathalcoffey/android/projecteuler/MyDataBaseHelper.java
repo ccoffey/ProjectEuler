@@ -146,7 +146,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 	}
 
 	public synchronized void updateProblems(ProjectEulerClient pec, ArrayList<EulerProblem> problems, boolean install) 
-	{
+	{		
 		for(EulerProblem ep : problems)
 		{
 			if(MyApplication.cancelUpdater)

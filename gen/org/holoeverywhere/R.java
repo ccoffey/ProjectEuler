@@ -430,7 +430,7 @@ public final class R {
 		public static final int abs__ab_stacked_solid_dark_holo = 0x7f02000a;
 		public static final int btn_toggle_on_pressed_holo_dark = 0x7f0200ee;
 		public static final int btn_rating_star_off_normal_holo_light = 0x7f0200cd;
-		public static final int list_selector_disabled_holo_dark = 0x7f02011d;
+		public static final int list_selector_disabled_holo_dark = 0x7f02011c;
 		public static final int textfield_disabled_focused_holo_dark = 0x7f020197;
 		public static final int abs__ab_solid_dark_holo = 0x7f020007;
 		public static final int abs__textfield_search_default_holo_dark = 0x7f020063;
@@ -446,7 +446,7 @@ public final class R {
 		public static final int btn_check_on_disabled_focused_holo_dark = 0x7f02008b;
 		public static final int btn_radio_off_disabled_focused_holo_dark = 0x7f0200b1;
 		public static final int abs__btn_cab_done_default_holo_dark = 0x7f020012;
-		public static final int list_selector_background_transition_holo_light = 0x7f02011c;
+		public static final int list_selector_background_transition_holo_light = 0x7f02011b;
 		public static final int btn_radio_on_disabled_holo_light = 0x7f0200bf;
 		public static final int btn_radio_on_focused_holo_light = 0x7f0200c1;
 		public static final int old_switch_thumb_disabled_holo_light = 0x7f02012b;
@@ -511,7 +511,7 @@ public final class R {
 		public static final int ratingbar_full_empty_holo_light = 0x7f020154;
 		public static final int abs__ic_menu_moreoverflow_normal_holo_dark = 0x7f02002e;
 		public static final int dialog_middle_holo = 0x7f0200f7;
-		public static final int list_divider_holo_light = 0x7f020114;
+		public static final int list_divider_holo_light = 0x7f020113;
 		public static final int expander_ic_maximized = 0x7f020103;
 		public static final int abs__progress_primary_holo_light = 0x7f02004d;
 		public static final int abs__ic_go_search_api_holo_light = 0x7f02002b;
@@ -530,7 +530,7 @@ public final class R {
 		public static final int abs__ic_voice_search_api_holo_light = 0x7f020035;
 		public static final int textfield_multiline_activated_holo_light = 0x7f02019e;
 		public static final int btn_check_on_holo_light = 0x7f020093;
-		public static final int list_selector_disabled_holo_light = 0x7f02011e;
+		public static final int list_selector_disabled_holo_light = 0x7f02011d;
 		public static final int abs__spinner_48_inner_holo = 0x7f020052;
 		public static final int ratingbar_holo_light = 0x7f02015a;
 		public static final int btn_default_disabled_holo_dark = 0x7f02009a;
@@ -540,7 +540,7 @@ public final class R {
 		public static final int abs__spinner_ab_disabled_holo_dark = 0x7f020056;
 		public static final int day_picker_week_view_dayline_holo = 0x7f0200f0;
 		public static final int edit_text_holo_light = 0x7f0200fd;
-		public static final int list_focused_holo = 0x7f020115;
+		public static final int list_focused_holo = 0x7f020114;
 		public static final int btn_rating_star_off_pressed_holo_light = 0x7f0200cf;
 		public static final int btn_default_disabled_focused_holo_dark = 0x7f020098;
 		public static final int textfield_bg_activated_holo_dark = 0x7f020190;
@@ -551,7 +551,7 @@ public final class R {
 		public static final int expander_group_holo_light = 0x7f020102;
 		public static final int old_switch_inner_holo_light = 0x7f020127;
 		public static final int switch_bg_focused_holo_light = 0x7f02017f;
-		public static final int item_background_holo_dark = 0x7f020110;
+		public static final int item_background_holo_dark = 0x7f02010f;
 		public static final int spinner_disabled_holo_light = 0x7f020177;
 		public static final int abs__btn_cab_done_focused_holo_light = 0x7f020015;
 		public static final int abs__ic_clear_search_api_disabled_holo_light = 0x7f020028;
@@ -598,11 +598,11 @@ public final class R {
 		public static final int btn_radio_off_focused_holo_dark = 0x7f0200b5;
 		public static final int btn_toggle_off_pressed_holo_dark = 0x7f0200e4;
 		public static final int rate_star_big_half_holo_light = 0x7f020148;
-		public static final int list_selector_background_transition_holo_dark = 0x7f02011b;
+		public static final int list_selector_background_transition_holo_dark = 0x7f02011a;
 		public static final int btn_check_on_focused_holo_light = 0x7f020090;
 		public static final int abs__progress_secondary_holo_dark = 0x7f02004e;
 		public static final int textfield_bg_disabled_focused_holo_dark = 0x7f020192;
-		public static final int list_selector_holo_dark = 0x7f02011f;
+		public static final int list_selector_holo_dark = 0x7f02011e;
 		public static final int expander_close_holo_dark = 0x7f0200fe;
 		public static final int btn_check_off_pressed_holo_light = 0x7f020087;
 		public static final int abs__progress_primary_holo_dark = 0x7f02004c;
@@ -650,7 +650,7 @@ public final class R {
 		public static final int textfield_bg_disabled_holo_dark = 0x7f020193;
 		public static final int ratingbar_small_holo_light = 0x7f02015c;
 		public static final int btn_check_off_focused_holo_light = 0x7f020080;
-		public static final int list_longpressed_holo = 0x7f020116;
+		public static final int list_longpressed_holo = 0x7f020115;
 		public static final int abs__ab_stacked_transparent_light_holo = 0x7f02000d;
 		public static final int btn_radio_on_pressed_holo_dark = 0x7f0200c4;
 		public static final int switch_inner_holo_dark = 0x7f020182;
@@ -659,7 +659,7 @@ public final class R {
 		public static final int switch_thumb_disabled_holo_dark = 0x7f020186;
 		public static final int abs__ic_search = 0x7f020032;
 		public static final int btn_toggle_off_focused_holo_light = 0x7f0200e1;
-		public static final int list_section_divider_holo_dark = 0x7f020119;
+		public static final int list_section_divider_holo_dark = 0x7f020118;
 		public static final int spinner_focused_holo_dark = 0x7f020178;
 		public static final int btn_rating_star_on_disabled_holo_light = 0x7f0200d3;
 		public static final int btn_radio_label_background = 0x7f0200b0;
@@ -680,7 +680,7 @@ public final class R {
 		public static final int dialog_middle_holo_light = 0x7f0200f9;
 		public static final int abs__list_selector_disabled_holo_dark = 0x7f020041;
 		public static final int progress_indeterminate_horizontal_holo = 0x7f020137;
-		public static final int item_background_holo_light = 0x7f020111;
+		public static final int item_background_holo_light = 0x7f020110;
 		public static final int abs__tab_selected_focused_holo = 0x7f02005f;
 		public static final int abs__list_selector_holo_dark = 0x7f020043;
 		public static final int btn_toggle_off_normal_holo_light = 0x7f0200e3;
@@ -691,7 +691,7 @@ public final class R {
 		public static final int switch_bg_holo_light = 0x7f020181;
 		public static final int btn_radio_on_holo_dark = 0x7f0200c2;
 		public static final int btn_rating_star_on_focused_holo_light = 0x7f0200d5;
-		public static final int list_pressed_holo_dark = 0x7f020117;
+		public static final int list_pressed_holo_dark = 0x7f020116;
 		public static final int abs__textfield_search_default_holo_light = 0x7f020064;
 		public static final int switch_thumb_activated_holo_light = 0x7f020185;
 		public static final int btn_check_on_pressed_holo_light = 0x7f020095;
@@ -705,7 +705,7 @@ public final class R {
 		public static final int btn_rating_star_on_pressed_holo_dark = 0x7f0200d8;
 		public static final int abs__spinner_ab_pressed_holo_light = 0x7f02005d;
 		public static final int abs__search_dropdown_light = 0x7f020051;
-		public static final int list_divider_holo_dark = 0x7f020113;
+		public static final int list_divider_holo_dark = 0x7f020112;
 		public static final int overscroll_edge = 0x7f020130;
 		public static final int btn_toggle_off_disabled_holo_light = 0x7f0200df;
 		public static final int spinner_pressed_holo_light = 0x7f02017b;
@@ -725,7 +725,7 @@ public final class R {
 		public static final int ratingbar_full_filled_holo_light = 0x7f020156;
 		public static final int abs__progress_horizontal_holo_dark = 0x7f020049;
 		public static final int btn_check_on_disabled_holo_dark = 0x7f02008d;
-		public static final int list_pressed_holo_light = 0x7f020118;
+		public static final int list_pressed_holo_light = 0x7f020117;
 		public static final int btn_check_off_disable_holo_light = 0x7f02007a;
 		public static final int spinner_default_holo_light = 0x7f020175;
 		public static final int abs__textfield_searchview_right_holo_dark = 0x7f02006d;
@@ -733,7 +733,7 @@ public final class R {
 		public static final int btn_group_disabled_holo_light = 0x7f0200a5;
 		public static final int background_holo_light = 0x7f020075;
 		public static final int abs__ab_bottom_transparent_light_holo = 0x7f020004;
-		public static final int list_activated_holo = 0x7f020112;
+		public static final int list_activated_holo = 0x7f020111;
 		public static final int btn_default_holo_dark = 0x7f02009e;
 		public static final int btn_toggle_on_focused_holo_dark = 0x7f0200ea;
 		public static final int numberpicker_selection_divider = 0x7f020125;
@@ -781,7 +781,7 @@ public final class R {
 		public static final int abs__ic_ab_back_holo_dark = 0x7f020020;
 		public static final int btn_check_on_disable_holo_light = 0x7f02008a;
 		public static final int abs__dialog_full_holo_light = 0x7f02001f;
-		public static final int list_selector_holo_light = 0x7f020120;
+		public static final int list_selector_holo_light = 0x7f02011f;
 		public static final int ratingbar_full_holo_dark = 0x7f020157;
 		public static final int abs__btn_cab_done_pressed_holo_light = 0x7f020019;
 		public static final int switch_track_holo_dark = 0x7f02018c;
@@ -812,7 +812,7 @@ public final class R {
 		public static final int abs__textfield_search_right_default_holo_light = 0x7f020066;
 		public static final int btn_rating_star_on_focused_holo_dark = 0x7f0200d4;
 		public static final int abs__spinner_ab_disabled_holo_light = 0x7f020057;
-		public static final int list_section_divider_holo_light = 0x7f02011a;
+		public static final int list_section_divider_holo_light = 0x7f020119;
 		public static final int abs__spinner_ab_default_holo_dark = 0x7f020054;
 		public static final int btn_check_off_holo_light = 0x7f020083;
 		public static final int abs__tab_unselected_pressed_holo = 0x7f020062;
