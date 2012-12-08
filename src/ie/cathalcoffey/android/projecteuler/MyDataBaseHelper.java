@@ -145,127 +145,174 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
  
 	}
 
-	public synchronized void updateProblems(ProjectEulerClient pec, ArrayList<EulerProblem> problems, boolean install) 
-	{		
+	public ArrayList<Long> getLastUpdated()
+	{
+		ArrayList<Long> last_updated = new ArrayList<Long>();
+		Cursor cursor = myDataBase.rawQuery("select updated from data", null);
+        while(cursor.moveToNext())
+        {
+	        last_updated.add(cursor.getLong(0));
+        }
+        cursor.close();
+        return last_updated;	
+	}
+	
+	public void updateProblems(ProjectEulerClient pec, ArrayList<EulerProblem> problems, boolean install, boolean userStarted)
+	{
+		NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+    	NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+    	
+    	Intent intent = new Intent(context, Settings.class);
+    	intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);        	
+    	PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    	
+    	builder.setContentIntent(contentIntent)
+        .setSmallIcon(R.drawable.ic_notification)
+        .setWhen(System.currentTimeMillis())
+        .setAutoCancel(true)
+        .setContentTitle("Updating problem set")
+        .setContentText("Authenticating...");
+    	
+    	Notification notification = builder.build();
+        
+		ContentValues args = new ContentValues();
+		
+		long start, end;
+		
+		start = System.currentTimeMillis();
+		
+		// Step 1, update solved and solved_by
 		for(EulerProblem ep : problems)
 		{
 			if(MyApplication.cancelUpdater)
-			{
 				return;
+	        
+			if(userStarted)
+			{
+				builder.setContentText("Updating: Problem " + ep.id + " of " + problems.size());
+		    	notification = builder.build();
+		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		        notificationManager.notify(1, notification);
 			}
 			
-			if(install)
+			args.put("solvedby", ep.solved_by);
+		    args.put("solved", ep.solved_flag);
+		    
+			myDataBase.update("data", args, "_id = ?", new String[]{"" + ep.id});
+		}
+		
+		end = System.currentTimeMillis();
+		Log.w("Euler upate: solved and solved_by", "" + (end-start) / 1000 + " seconds");
+		
+		if(install)
+		{
+			start = System.currentTimeMillis();
+			
+			// Step 2, figure out which problems have changed.
+			ArrayList<Long> last_updated = getLastUpdated();
+			int i;
+			for(i = 0; i < last_updated.size(); i++)
 			{
-				NotificationManager notificationManager = (NotificationManager)context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+				if(MyApplication.cancelUpdater)
+					return;
 				
-				NotificationCompat.Builder builder = new  NotificationCompat.Builder(context);
-			    
-				Intent intent = new Intent(context, ProblemList.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-				PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT );
-
-				builder.setContentIntent(contentIntent)
-			    .setSmallIcon(R.drawable.ic_notification)
-			    .setWhen(System.currentTimeMillis())
-			    .setAutoCancel(true)
-			    .setContentTitle("Updating problem set")
-			    .setContentText("Updating problem: " + ep.id + " of " + problems.size());
-				Notification notification = builder.build();
-				notification.flags |= Notification.FLAG_AUTO_CANCEL;	
-				
-				notificationManager.notify(1, notification);
-			}
-			
-			if(cancel)
-				return;
-			
-			myDataBase.beginTransaction();
-			
-			long last_updated = getLastModified(ep.id);
-			if(last_updated != -1)
-			{
-				ContentValues args = new ContentValues();
-				args.put("solvedby", ep.solved_by);
-			    args.put("solved", ep.solved_flag);
-			    
-			    if(last_updated < ep.date_last_update)
-			    {	
-					args.put("title", ep.description);
-					args.put("published", ep.date_published);
-					args.put("updated", ep.date_last_update);
-				    args.put("answer", ep.answer);
-			    }
-			    
-				myDataBase.update("data", args, "_id = ?", new String[]{"" + ep.id});
-			}
-			
-			else
-			{
-				if(install)
-				{	
-					ContentValues args = new ContentValues();
-					args.put("_id", ep.id);
-					args.put("title", ep.description);
-					args.put("published", ep.date_published);
-					args.put("updated", ep.date_last_update);
-					args.put("solvedby", ep.solved_by);
-				    args.put("solved", ep.solved_flag);
-				    
-				    String html;
-					try 
-					{
-						html = pec.getProblem(ep.id).html();
-						Document soup = Jsoup.parse(html);
-						
-						for(Element img : soup.select("img"))
-						{
-							if(img.hasAttr("src"))
-							{
-								String src = img.attr("src");
-								if (src.startsWith("http://projecteuler.net/"))
-					                src = src.substring("http://projecteuler.net/".length());
-								
-								File f = new File("/data/data/ie.cathalcoffey.android.projecteuler/" + src);
-								if(!f.exists())
-								{
-								    f.getParentFile().mkdirs();
-								    
-								    InputStream input = new BufferedInputStream(new URL("http://projecteuler.net/" + src).openStream());
-						            OutputStream output = new FileOutputStream("/data/data/ie.cathalcoffey.android.projecteuler/" + src);
-	
-						            byte data[] = new byte[1024];
-						            int count;
-						            while ((count = input.read(data)) != -1) 
-						                output.write(data, 0, count);
-	
-						            output.flush();
-						            output.close();
-						            input.close();
-								}
-							}
-						}
-						
-					    args.put("html", html);
-					} 
+				if(last_updated.get(i) < problems.get(i).date_last_update)
+				{
+					builder.setContentText("Modifying: Problem " + problems.get(i).id + " of " + problems.size());
+			    	notification = builder.build();
+			    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+			        notificationManager.notify(1, notification);
 					
-					catch (Exception e)
-					{
-						Log.w("Error", e.getMessage());
-						
-				        return;
-					}
-				    
-				    args.put("answer", ep.answer);
-				    
-				    myDataBase.insert("data", null, args);
+			        installOrUpdateProblem(pec, problems.get(i), false);
 				}
 			}
 			
-		    myDataBase.setTransactionSuccessful();
-	        myDataBase.endTransaction();
+			end = System.currentTimeMillis();
+			Log.w("Euler upate: Problem which have changed", "" + (end-start) / 1000 + " seconds");
+			
+			start = System.currentTimeMillis();
+			
+			// Step 3, add new problems.
+			for(int j = i; j < problems.size(); j++)
+			{
+				if(MyApplication.cancelUpdater)
+					return;
+				
+				builder.setContentText("Installing: Problem " + problems.get(j).id + " of " + problems.size());
+		    	notification = builder.build();
+		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		        notificationManager.notify(1, notification);
+		        
+				installOrUpdateProblem(pec, problems.get(j), true);
+			}
+			
+			end = System.currentTimeMillis();
+			Log.w("Euler upate: Install new problems", (end-start) / 1000 + " seconds");
 		}
+		
+		notificationManager.cancel(1);
 	}
+	
+	public void installOrUpdateProblem(ProjectEulerClient pec, EulerProblem ep, boolean install)
+	{
+		ContentValues args = new ContentValues();
+		args.put("_id", ep.id);
+		args.put("title", ep.description);
+		args.put("published", ep.date_published);
+		args.put("updated", ep.date_last_update);
+		args.put("solvedby", ep.solved_by);
+	    args.put("solved", ep.solved_flag);
 
+		try 
+		{
+		    String html = pec.getProblem(ep.id).html();
+			Document soup = Jsoup.parse(html);
+			
+			for(Element img : soup.select("img"))
+			{
+				if(img.hasAttr("src"))
+				{
+					String src = img.attr("src");
+					if (src.startsWith("http://projecteuler.net/"))
+		                src = src.substring("http://projecteuler.net/".length());
+					
+					File f = new File("/data/data/ie.cathalcoffey.android.projecteuler/" + src);
+					if(!f.exists())
+					{
+					    f.getParentFile().mkdirs();
+					    
+					    InputStream input = new BufferedInputStream(new URL("http://projecteuler.net/" + src).openStream());
+			            OutputStream output = new FileOutputStream("/data/data/ie.cathalcoffey.android.projecteuler/" + src);
+
+			            byte data[] = new byte[1024];
+			            int count;
+			            while ((count = input.read(data)) != -1) 
+			                output.write(data, 0, count);
+
+			            output.flush();
+			            output.close();
+			            input.close();
+					}
+				}
+			}
+			
+		    args.put("html", html);
+		    args.put("answer", ep.answer);
+		} 
+		
+		catch (Exception e)
+		{
+			Log.w("Error", e.getMessage());
+			
+	        return;
+		}
+	    
+	    if(install)
+	        myDataBase.insert("data", null, args);
+	    else
+			myDataBase.update("data", args, "_id = ?", new String[]{"" + ep.id});
+	}
+	
 	public long getLastModified(long _id) 
 	{
 	   Cursor cursor = myDataBase.rawQuery("select updated from data where _id=?", new String[] { "" + _id });

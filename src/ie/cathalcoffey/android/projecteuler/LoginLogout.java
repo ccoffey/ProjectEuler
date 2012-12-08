@@ -78,7 +78,7 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
 						
 						ArrayList<EulerProblem> problems = MyApplication.pec.getProblems();
 					
-						MyApplication.myDbHelper.updateProblems(MyApplication.pec, problems, false);	
+						MyApplication.myDbHelper.updateProblems(MyApplication.pec, problems, false, false);	
 						
 						success = true;
 						completed = true;
@@ -215,13 +215,13 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
     					{
     						MyApplication.cancelUpdater = true;
     						
-    						if(MyApplication.pec != null)
+    						if(MyApplication.updater_pec != null)
     						{
-    							if(MyApplication.pec.httppost != null)
-    							    MyApplication.pec.httppost.abort();
+    							if(MyApplication.updater_pec.httppost != null)
+    							    MyApplication.updater_pec.httppost.abort();
     							
-    							if(MyApplication.pec.httpget != null)
-    						        MyApplication.pec.httpget.abort();
+    							if(MyApplication.updater_pec.httpget != null)
+    						        MyApplication.updater_pec.httpget.abort();
     						}
     						
     						MyApplication.myDbHelper.updateSolved();
@@ -275,7 +275,7 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
 		{
 			MyApplication.prefEditor.commit();
 			
-	        if(!ExampleService.isRunning(this))
+			if(!ExampleService.isRunning(this) && MyApplication.settings != null && MyApplication.settings.getBoolean("autoUpdate", true) && MyApplication.settings.contains("username"))
 	        {
 		        Intent serviceIntent = new Intent(ExampleService.ACTION_FOREGROUND);
 				serviceIntent.setClass(this, ExampleService.class);

@@ -59,8 +59,8 @@ for line in the_page.split('\n'):
                 urlretrieve('http://projecteuler.net/%s' % src, '../assets/tmp/' + src)
         html = soup.prettify().decode("utf-8")
         c.execute('insert into data values (?,?,?,?,?,?,?,?)', (int(_id), title, int(published), int(updated), int(solvedby), 0, html, answer))
-con.commit()
 
+con.commit()
 shutil.copy('../res/drawable-xhdpi/login.png', '../assets/tmp/login.png')
 shutil.copy('../res/drawable-xhdpi/login_old.png', '../assets/tmp/login_old.png')
 

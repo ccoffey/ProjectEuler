@@ -11,7 +11,7 @@ cookie_jar = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar))
 urllib2.install_opener(opener)
 
-params = urllib.urlencode({'username': 'cathal', 'password': 'pi=3.1415', 'login': 'Login'})
+params = urllib.urlencode({'username': 'cathal', 'password': 'pi3141592', 'login': 'Login'})
 url = 'http://projecteuler.net/login'
 
 req = urllib2.Request(url, params)
@@ -59,8 +59,9 @@ for line in the_page.split('\n'):
                 urlretrieve('http://projecteuler.net/%s' % src, '../assets/tmp/' + src)
         html = soup.prettify().decode("utf-8")
         c.execute('insert into data values (?,?,?,?,?,?,?,?)', (int(_id), title, int(published), int(updated), int(solvedby), 0, html, answer))
+        if count == 14:
+            break
 con.commit()
-
 shutil.copy('../res/drawable-xhdpi/login.png', '../assets/tmp/login.png')
 shutil.copy('../res/drawable-xhdpi/login_old.png', '../assets/tmp/login_old.png')
 

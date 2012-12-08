@@ -13,6 +13,7 @@ import android.content.res.Configuration;
 
 public class MyApplication extends Application 
 {
+	static ProjectEulerClient updater_pec;
 	static ProjectEulerClient pec;
 	static Vector<Fragment> fragments;
 	static String display_text;

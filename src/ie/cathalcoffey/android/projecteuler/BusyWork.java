@@ -23,9 +23,14 @@ public class BusyWork extends AsyncTask<String, Void, Void>
 {
 	ExampleService context;
 	ArrayList<Long> installed;
-	BusyWork(ExampleService context)
+	boolean userStarted;
+	
+	BusyWork(ExampleService context, Intent intent)
 	{
 		this.context = context;
+		
+		if(intent != null && intent.hasExtra("userStarted"))
+		    this.userStarted = intent.getBooleanExtra("userStarted", false); 
 	}
 	
     @Override
@@ -36,16 +41,16 @@ public class BusyWork extends AsyncTask<String, Void, Void>
         Intent intent = new Intent();
         intent.setAction("UPDATE_COMPLETE");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-        
-        context.stopForegroundCompat(1);
+
         context.stopSelf();
+        
+        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(1);
     }
     
 	@Override
 	protected Void doInBackground(String... params) 
 	{
-		NotificationManager notificationManager = (NotificationManager)context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-		
     	SharedPreferences settings = context.getSharedPreferences("euler", Context.MODE_PRIVATE);
     	SharedPreferences.Editor prefEditor = settings.edit();
     	
@@ -54,12 +59,12 @@ public class BusyWork extends AsyncTask<String, Void, Void>
     		String username = settings.getString("username", "");
     		String password =  settings.getString("password", "");
     		
-	    	MyApplication.pec = new ProjectEulerClient();
+	    	MyApplication.updater_pec = new ProjectEulerClient();
 		    try 
 		    {		        
-				if(MyApplication.pec.login(username, password))
+				if(MyApplication.updater_pec.login(username, password))
 				{
-					EulerProfile ep = MyApplication.pec.getProfile();
+					EulerProfile ep = MyApplication.updater_pec.getProfile();
 					
 	    	        prefEditor.putString("username", username);
 	    	        prefEditor.putString("password", password);
@@ -69,7 +74,7 @@ public class BusyWork extends AsyncTask<String, Void, Void>
 	    	        prefEditor.putString("level", ep.level);
 	    	        prefEditor.putString("solved", ep.solved);
 	    	        
-	    	        ArrayList<EulerProblem> problems = MyApplication.pec.getProblems();
+	    	        ArrayList<EulerProblem> problems = MyApplication.updater_pec.getProblems();
 					
 	    	        if(MyApplication.myDbHelper == null)
 	    	        {
@@ -77,41 +82,17 @@ public class BusyWork extends AsyncTask<String, Void, Void>
 	    	            MyApplication.myDbHelper.openDataBase(SQLiteDatabase.OPEN_READWRITE);
 	    	        }
 	    	        
-	    	        MyApplication.myDbHelper.updateProblems(MyApplication.pec, problems, true);
+	    	        MyApplication.myDbHelper.updateProblems(MyApplication.updater_pec, problems, true, userStarted);
 	    	        prefEditor.commit();
-	    	        
-	    			notificationManager.cancel(1);
-				}
-				
-				else
-				{
-					NotificationCompat.Builder builder = new  NotificationCompat.Builder(context);
-				    
-					Intent intent = new Intent(context, LoginLogout.class);
-					intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-					PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT );
-
-					builder.setContentIntent(contentIntent)
-				    .setSmallIcon(R.drawable.ic_notification)
-				    .setWhen(System.currentTimeMillis())
-				    .setAutoCancel(true)
-				    .setContentTitle("Updating problem set")
-				    .setContentText("Unable to login, please check your login details.");
-					Notification notification = builder.build();
-					notification.flags |= Notification.FLAG_AUTO_CANCEL;	
-					
-					notificationManager.notify(1, notification);
 				}
 		    }
 		    
 		    catch (ClientProtocolException e) 
 		    {
-    			notificationManager.cancel(1);
 			} 
 		    
 		    catch (IOException e) 
 		    {
-    			notificationManager.cancel(1);
 			}	
 	    }
     	

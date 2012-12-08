@@ -90,8 +90,10 @@ public class PageFragment extends Fragment
 					Document soup = Jsoup.parse(MyApplication.pec.quickGet("http://projecteuler.net/minimal=captcha"));
 					
 					String src = soup.getElementsByTag("img").attr("src").toString();
-					
-					drawable = MyApplication.pec.loadImageFromWeb("http://projecteuler.net/" + src);
+					if(src.contains("captcha"))
+					{
+					    drawable = MyApplication.pec.loadImageFromWeb("http://projecteuler.net/" + src);
+					}
 				} 
 				
 				catch (ClientProtocolException e) 

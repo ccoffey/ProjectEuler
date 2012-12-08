@@ -9,31 +9,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class ExampleService extends ForegroundService 
 {
-	Receiver receiver;
 	BusyWork updater;
 	
 	@Override
 	public void onCreate() 
 	{
 		super.onCreate();
-		
-		receiver = new Receiver();
-		registerReceiver(receiver, new IntentFilter("ie.cathalcoffey.android.ProjectEuler.CANCEL_UPDATE")); 
-	}
-    
-	private class Receiver extends BroadcastReceiver 
-	{
-		 @Override
-		 public void onReceive(Context arg0, Intent arg1) 
-		 {
-			 Log.w("ProjectEuler", "Cancel background updater service");
-			 updater.cancel(true);
-		 }
 	}
 	
 	@Override
@@ -44,36 +31,8 @@ public class ExampleService extends ForegroundService
 		if (intent == null)
     		return;
     	
-        if (ACTION_FOREGROUND.equals(intent.getAction())) 
-        {
-        	NotificationManager notificationManager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-    		
-        	NotificationCompat.Builder builder = new  NotificationCompat.Builder(this);
-        	
-        	Intent i = new Intent(this, ProblemList.class);
-        	i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);        	
-        	PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        	
-        	builder.setContentIntent(contentIntent)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setWhen(System.currentTimeMillis())
-            .setAutoCancel(true)
-            .setContentTitle("Updating problem set")
-            .setContentText("Authenticating...");
-        	Notification notification = builder.build();
-        	notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        	
-            notificationManager.notify(1, notification);
-            updater = new BusyWork(this);
-    		updater.execute();
-    		
-            startForegroundCompat(1, notification);
-        } 
-        
-        else if (ACTION_BACKGROUND.equals(intent.getAction())) 
-        {
-            stopForegroundCompat(1);
-        }
+        updater = new BusyWork(this, intent);
+    	updater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 	
 	@Override
@@ -81,7 +40,7 @@ public class ExampleService extends ForegroundService
 	{
 		super.onDestroy();
 	    
-	    unregisterReceiver(receiver);
+		MyApplication.cancelUpdater = false;
 	}
 	
 	@Override

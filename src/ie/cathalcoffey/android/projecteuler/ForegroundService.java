@@ -16,6 +16,7 @@
 
 package ie.cathalcoffey.android.projecteuler;
 
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -34,7 +35,17 @@ import java.lang.reflect.Method;
  * against the Android 2.0 SDK, and it will against everything down to
  * Android 1.0.
  */
-public class ForegroundService extends Service {
+public class ForegroundService extends IntentService {
+
+	public ForegroundService() {
+		super("");
+		// TODO Auto-generated constructor stub
+	}
+	
+	public ForegroundService(String name) {
+		super(name);
+		// TODO Auto-generated constructor stub
+	}
 
 	static final String ACTION_FOREGROUND = "com.example.android.apis.FOREGROUND";
     static final String ACTION_BACKGROUND = "com.example.android.apis.BACKGROUND";
@@ -157,4 +168,10 @@ public class ForegroundService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+	@Override
+	protected void onHandleIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		
+	}
 }
