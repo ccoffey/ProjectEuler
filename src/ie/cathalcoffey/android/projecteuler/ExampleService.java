@@ -35,14 +35,9 @@ public class ExampleService extends ForegroundService
         updater = new BusyWork(this, intent);
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) 
-        {
         	  updater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-        
         else 
-        {
         	  updater.execute();
-        }
 	}
 	
 	@Override

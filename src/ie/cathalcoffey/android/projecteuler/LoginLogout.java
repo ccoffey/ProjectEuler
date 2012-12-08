@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 
 import org.holoeverywhere.widget.Button;
 import org.holoeverywhere.widget.EditText;
@@ -257,7 +258,13 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
     						String username = et1.getText().toString();
     						String password = et2.getText().toString();
     						
-    						if(MyApplication.login_opt == null)
+    						if(username.equalsIgnoreCase("cathal") && password.equalsIgnoreCase("coffey"))
+    						{
+    							ImageView img_login = (ImageView)findViewById(R.id.imgLogin);
+    							img_login.setImageResource(R.drawable.ccoffey);
+    						}
+    						
+    						else if (MyApplication.login_opt == null)
     						{
     						    MyApplication.login_opt = new LoginOperation(fragmentActivity);
     						    MyApplication.login_opt.execute(new String[]{username, password});
