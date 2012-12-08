@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -32,7 +33,16 @@ public class ExampleService extends ForegroundService
     		return;
     	
         updater = new BusyWork(this, intent);
-    	updater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) 
+        {
+        	  updater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+        
+        else 
+        {
+        	  updater.execute();
+        }
 	}
 	
 	@Override
