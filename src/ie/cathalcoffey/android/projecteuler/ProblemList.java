@@ -35,7 +35,7 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
     private MenuItem loginlogout;
     private String queryText;
     private Spinner spinner;
-    private ArrayAdapter<String> spinnerArrayAdapter;
+    private ArrayAdapter spinnerArrayAdapter;
     private SearchView searchView;
 	
 	@Override
@@ -53,13 +53,14 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         
         spinner = new Spinner(getSupportActionBar().getThemedContext());
-        spinnerArrayAdapter = new ArrayAdapter<String>
+        spinnerArrayAdapter = new CustomArrayAdapter
         (
             getSupportActionBar().getThemedContext(), 
-            R.layout.sherlock_spinner_item, 
-            new String[]{"All", "Solved", "Unsolved"}
+            R.layout.spinner_item, 
+            R.id.text1,
+            new String[]{Label.Unsolved.toString(), Label.Solved.toString(), Label.All.toString()}
         );
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
           
         getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);

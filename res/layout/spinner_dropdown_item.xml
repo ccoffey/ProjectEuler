@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal" 
+	android:gravity="center_vertical|center_horizontal">
+	<TextView
+	    android:id="@+id/text1"
+	    style="?attr/spinnerDropDownItemStyle"
+	    android:singleLine="true"
+	    android:layout_width="wrap_content"
+	    android:layout_height="?attr/dropdownListPreferredItemHeight"
+	    android:text="Unsolved"
+	    android:gravity="left|center_vertical"
+	    android:layout_weight="1" />
+	<TextView
+	    android:id="@+id/text2"
+	    style="?attr/spinnerDropDownItemStyle"
+	    android:singleLine="true"
+	    android:layout_width="wrap_content"
+	    android:layout_height="?attr/dropdownListPreferredItemHeight"
+	    android:text="0"
+	    android:gravity="right|center_vertical"
+	    android:textColor="#606060"
+	    android:layout_weight="1" />
+</LinearLayout>
+
+    

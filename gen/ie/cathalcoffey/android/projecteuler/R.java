@@ -2685,7 +2685,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int alarm=0x7f070020;
         public static final int alertTitle=0x7f07005d;
         public static final int all=0x7f070021;
-        public static final int amPm=0x7f0700a4;
+        public static final int amPm=0x7f0700a5;
         public static final int back_button=0x7f070095;
         public static final int beginning=0x7f070027;
         public static final int bottom=0x7f070011;
@@ -2713,7 +2713,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int decrement=0x7f070032;
         public static final int dialog=0x7f070029;
         public static final int disableHome=0x7f070009;
-        public static final int divider=0x7f0700a2;
+        public static final int divider=0x7f0700a3;
         public static final int dropdown=0x7f07002a;
         public static final int edit=0x7f07002d;
         public static final int editText1=0x7f070087;
@@ -2729,7 +2729,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int guess=0x7f07007d;
         public static final int headers=0x7f070090;
         public static final int homeAsUp=0x7f070006;
-        public static final int hour=0x7f0700a1;
+        public static final int hour=0x7f0700a2;
         public static final int icon=0x7f07005c;
         public static final int id=0x7f07009b;
         public static final int imageView1=0x7f07007c;
@@ -2745,7 +2745,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int list_footer=0x7f070091;
         public static final int message=0x7f070061;
         public static final int middle=0x7f070028;
-        public static final int minute=0x7f0700a3;
+        public static final int minute=0x7f0700a4;
         public static final int month=0x7f070072;
         public static final int month_name=0x7f07006d;
         public static final int music=0x7f070025;
@@ -2786,15 +2786,16 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int system=0x7f070023;
         public static final int tabMode=0x7f070003;
         public static final int text1=0x7f07009e;
+        public static final int text2=0x7f0700a0;
         public static final int textView1=0x7f070078;
         public static final int textView2=0x7f070088;
-        public static final int timePicker=0x7f0700a0;
+        public static final int timePicker=0x7f0700a1;
         public static final int title=0x7f07006c;
         public static final int titleDivider=0x7f07005e;
         public static final int titleDividerTop=0x7f07005a;
         public static final int title_container=0x7f07006b;
         public static final int title_template=0x7f07005b;
-        public static final int titles=0x7f0700a5;
+        public static final int titles=0x7f0700a6;
         public static final int toggleButton1=0x7f07009f;
         public static final int top=0x7f070010;
         public static final int topPanel=0x7f070059;
@@ -2917,9 +2918,11 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int simple_list_item_single_choice=0x7f03004f;
         public static final int simple_spinner_dropdown_item=0x7f030050;
         public static final int simple_spinner_item=0x7f030051;
-        public static final int time_picker_dialog=0x7f030052;
-        public static final int time_picker_holo=0x7f030053;
-        public static final int viewpager_layout=0x7f030054;
+        public static final int spinner_dropdown_item=0x7f030052;
+        public static final int spinner_item=0x7f030053;
+        public static final int time_picker_dialog=0x7f030054;
+        public static final int time_picker_holo=0x7f030055;
+        public static final int viewpager_layout=0x7f030056;
     }
     public static final class raw {
         public static final int roboto_bold=0x7f060000;
