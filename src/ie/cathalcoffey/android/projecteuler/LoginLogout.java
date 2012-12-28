@@ -59,7 +59,7 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
 					{
 						EulerProfile ep = MyApplication.pec.getProfile();
 						
-						MyApplication.prefEditor.putString("username", username);
+						MyApplication.prefEditor.putString("username", ep.username);
 						MyApplication.prefEditor.putString("password", password);
 						MyApplication.prefEditor.putString("alias", ep.alias);
 						MyApplication.prefEditor.putString("country", ep.country);
