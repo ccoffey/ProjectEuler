@@ -44,22 +44,27 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 
     public int[] getSolvedCount()
     {	
-    	String query;
-    	Cursor c;
+    	String query = "SELECT solved, COUNT(_id) FROM data GROUP BY solved";
+    	Cursor c = myDataBase.rawQuery(query, new String[]{});
+        
+    	int solved = 0;
+    	int unsolved = 0;
     	
-    	query = "SELECT count(_id) FROM data WHERE solved = 1";
-        c = myDataBase.rawQuery(query, new String[]{});
-        c.moveToFirst();
-        int solved = c.getInt(0);
-        c.close();
-        
-        query = "SELECT count(*) FROM data";
-        c = myDataBase.rawQuery(query, new String[]{});
-        c.moveToFirst();
-        int count = c.getInt(0);
-        c.close();
-        
-        return new int[]{solved, count};
+    	while(c.moveToNext())
+    	{
+            switch(c.getInt(0))
+            {
+                case 0:
+            	    unsolved = c.getInt(1);
+            	    break;
+            	    
+                case 1:
+            	    solved = c.getInt(1);
+            	    break;
+            }
+    	}
+    	
+        return new int[]{solved, solved+unsolved};
     }
     
     public Cursor getData(String constraint)
@@ -198,7 +203,10 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 			args.put("solvedby", ep.solved_by);
 		    args.put("solved", ep.solved_flag);
 		    
+		    myDataBase.beginTransaction();
 			myDataBase.update("data", args, "_id = ?", new String[]{"" + ep.id});
+			myDataBase.setTransactionSuccessful();
+			myDataBase.endTransaction();
 		}
 		
 		end = System.currentTimeMillis();
@@ -211,7 +219,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 			// Step 2, figure out which problems have changed.
 			ArrayList<Long> last_updated = getLastUpdated();
 			int i;
-			for(i = 0; i < last_updated.size(); i++)
+			for(i = 0; i < Math.min(problems.size(), last_updated.size()); i++)
 			{
 				if(MyApplication.cancelUpdater)
 					return;
@@ -307,10 +315,13 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 	        return;
 		}
 	    
+		myDataBase.beginTransaction();
 	    if(install)
 	        myDataBase.insert("data", null, args);
 	    else
 			myDataBase.update("data", args, "_id = ?", new String[]{"" + ep.id});
+		myDataBase.setTransactionSuccessful();
+		myDataBase.endTransaction();
 	}
 	
 	public long getLastModified(long _id) 

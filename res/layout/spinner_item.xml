@@ -9,16 +9,6 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:ellipsize="marquee" 
-	    android:text="abcdedf"
+	    android:text=""
 	    android:layout_alignParentLeft="true" />
-	<TextView 
-	    android:id="@+id/text2"
-	    style="?attr/spinnerItemStyle"
-	    android:singleLine="true"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:ellipsize="marquee" 
-	    android:text="projecteuler.net"
-	    android:textSize="14sp"
-	    android:layout_below="@+id/text1" />
 </RelativeLayout>

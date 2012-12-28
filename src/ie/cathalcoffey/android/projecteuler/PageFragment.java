@@ -333,7 +333,14 @@ public class PageFragment extends Fragment
 				}
 				
 				if(success)
+				{
 		            this.progressMsg = "Congratulations, the answer you gave to problem " + id + " is correct.";
+		            
+		            // A problem has just been solved, update counts.
+		            int[] counts = MyApplication.myDbHelper.getSolvedCount();
+		    		MyApplication.COUNT_SOLVED = counts[0];
+		    		MyApplication.COUNT_ALL = counts[1];
+				}
 				else
 					this.progressMsg = pec.solve_msg;
 				

@@ -79,8 +79,13 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
 						
 						ArrayList<EulerProblem> problems = MyApplication.pec.getProblems();
 					
+						MyApplication.cancelUpdater = false;
 						MyApplication.myDbHelper.updateProblems(MyApplication.pec, problems, false, false);	
 						
+					    int[] counts = MyApplication.myDbHelper.getSolvedCount();
+					    MyApplication.COUNT_SOLVED = counts[0];
+					    MyApplication.COUNT_ALL = counts[1];
+					  
 						success = true;
 						completed = true;
 						
@@ -177,29 +182,27 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
 	}
 	
 	@Override
+	public void onResume() 
+	{
+		super.onResume();
+		
+		Log.d("cathal", "LoginLogout: onResume()");
+	}
+	
+	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
 	    super.onCreate(savedInstanceState);
 
+	    Log.d("cathal", "LoginLogout: onCreate()");
+	    
 	    fragmentActivity = this;
 	    getSupportActionBar().setDisplayShowTitleEnabled(false);
 	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	    
 	    context = this;
-	    
-	    if(MyApplication.settings == null)
-	        MyApplication.settings = getSharedPreferences("euler", MODE_PRIVATE);
-	    
-	    if(MyApplication.prefEditor == null)
-	        MyApplication.prefEditor = MyApplication.settings.edit();
-	    
-	    if(MyApplication.myDbHelper == null)
-	    {
-	        MyApplication.myDbHelper = new MyDataBaseHelper(this);
-	        MyApplication.myDbHelper.openDataBase(SQLiteDatabase.OPEN_READWRITE);
-	    }
 
-        if(MyApplication.settings.contains("username"))
+	    if(MyApplication.settings != null && MyApplication.settings.contains("username"))
         {
         	setContentView(R.layout.logout);
         	
@@ -226,12 +229,13 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
     						}
     						
     						MyApplication.myDbHelper.updateSolved();
+    						MyApplication.settings.edit().clear();
+    						MyApplication.settings.edit().commit();
     						
-    						MyApplication.settings = getSharedPreferences("euler", MODE_PRIVATE);
-    						MyApplication.prefEditor = MyApplication.settings.edit();
+    						MyApplication.prefEditor = null;
+    						MyApplication.settings = null;
     						
-    						MyApplication.prefEditor.clear();
-    						MyApplication.prefEditor.commit();
+    						MyApplication.COUNT_SOLVED = 0;
     						
     						finish();
     						overridePendingTransition(0, 0);
@@ -252,6 +256,12 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
     					@Override
     					public void onClick(View v) 
     					{
+                            if(MyApplication.settings == null)
+    						    MyApplication.settings = getSharedPreferences("euler", MODE_PRIVATE);
+
+                            if(MyApplication.prefEditor == null)
+    						    MyApplication.prefEditor = MyApplication.settings.edit();
+                            
     						EditText et1 = (EditText)findViewById(R.id.editText1);
     						EditText et2 = (EditText)findViewById(R.id.editText2);
     						
@@ -281,7 +291,7 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
 		if(MyApplication.login_opt.success)
 		{
 			MyApplication.prefEditor.commit();
-			
+
 			if(!ExampleService.isRunning(this) && MyApplication.settings != null && MyApplication.settings.getBoolean("autoUpdate", true) && MyApplication.settings.contains("username"))
 	        {
 		        Intent serviceIntent = new Intent(ExampleService.ACTION_FOREGROUND);
@@ -305,6 +315,12 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
 	@Override
 	public void onDialogNegativeClick(DialogFragment dialog) 
 	{
+		if(MyApplication.prefEditor != null)
+		{
+			MyApplication.prefEditor.clear();
+			MyApplication.prefEditor.commit();
+		}
+		
 		if(MyApplication.login_opt != null)
 		{
 		    MyApplication.login_opt.cancel(true);

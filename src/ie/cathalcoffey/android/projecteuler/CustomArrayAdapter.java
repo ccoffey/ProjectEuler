@@ -18,6 +18,23 @@ public class CustomArrayAdapter extends ArrayAdapter {
 		this.labels = objects;
 	}
 
+	public View getView(int position, View convertView, ViewGroup parent)
+	{
+		View row = convertView;
+		
+		if(convertView == null)
+		{
+			LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			row = vi.inflate(R.layout.spinner_item, parent, false);
+		}
+		
+		TextView label = (TextView)row.findViewById(R.id.text1);
+		String label_text = labels[position].toString();
+		label.setText(label_text);
+		
+		return row;
+	}
+	
 	public View getDropDownView(int position, View convertView, ViewGroup parent)
 	{
 		View row = convertView;
@@ -34,19 +51,17 @@ public class CustomArrayAdapter extends ArrayAdapter {
 		
 		TextView count = (TextView)row.findViewById(R.id.text2);
 		
-		int[] counts = MyApplication.myDbHelper.getSolvedCount();
-		
 		int count_text = 0;
 		switch(Label.valueOf(label_text))
 		{
 		    case All:
-		    	count_text = counts[1];
+		    	count_text = MyApplication.COUNT_ALL;
 		    	break;
 		    case Solved:
-		    	count_text = counts[0];
+		    	count_text = MyApplication.COUNT_SOLVED;
 		    	break;
 		    case Unsolved:
-		    	count_text = counts[1] - counts[0];
+		    	count_text = MyApplication.COUNT_ALL - MyApplication.COUNT_SOLVED;
 		    	break;  
 		}
 		count.setText("" + count_text);

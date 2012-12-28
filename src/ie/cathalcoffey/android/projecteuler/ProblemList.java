@@ -7,6 +7,7 @@ import org.holoeverywhere.app.Fragment;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 
@@ -18,6 +19,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 
 import org.holoeverywhere.widget.AdapterView;
@@ -32,7 +34,6 @@ import org.holoeverywhere.widget.TextView;
 public class ProblemList extends Activity implements SearchView.OnQueryTextListener, ActionBar.OnNavigationListener
 {
 	private SimplerCursorAdapter cursorAdapter;
-    private MenuItem loginlogout;
     private String queryText;
     private Spinner spinner;
     private ArrayAdapter spinnerArrayAdapter;
@@ -72,12 +73,12 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
             .setIntent(settings)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         
-        if (MyApplication.settings.contains("username"))
-        	loginlogout = menu.add("Logout");
-        
+        MenuItem loginlogout;
+		if (MyApplication.settings != null && MyApplication.settings.contains("username"))
+        	loginlogout = menu.add(Menu.NONE, 123, Menu.NONE, "Logout");
         else
-        	loginlogout = menu.add("Login");
-        
+        	loginlogout = menu.add(Menu.NONE, 123, Menu.NONE, "Login");
+
         Intent intent = new Intent(this, LoginLogout.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         loginlogout.setIntent(intent);
@@ -95,29 +96,26 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
 	
 	Receiver receiver;
 	
+	@Override
+	public boolean onPrepareOptionsMenu (Menu menu)
+	{
+	    if (MyApplication.settings != null && MyApplication.settings.contains("username"))
+		    menu.findItem(123).setTitle("Logout");
+        else
+        	menu.findItem(123).setTitle("Login");
+	   
+	    return super.onPrepareOptionsMenu (menu);        
+	}
+	
     @Override
 	public void onResume() 
 	{
 	    super.onResume();
-	    
+		
 	    LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("UPDATE_COMPLETE"));
 	    
-	    if(loginlogout != null)
-	    {
-		    if (MyApplication.settings.contains("username"))
-	        	loginlogout.setTitle("Logout");
-	        else
-	        	loginlogout.setTitle("Login");
-	    }
-	    
-	    TextView solved = (TextView)findViewById(R.id.solved);
-	    
-	    int[] counts = {0, 0};
-	    if(MyApplication.myDbHelper != null)
-	    	counts = MyApplication.myDbHelper.getSolvedCount();
-	    
-	    solved.setText(String.format("Solved %d of %d", counts[0], counts[1]));
-	    
+	    TextView solved = (TextView)findViewById(R.id.solved); 
+	    solved.setText(String.format("Solved %d of %d", MyApplication.COUNT_SOLVED, MyApplication.COUNT_ALL));
     	cursorAdapter.getFilter().filter("");
 	}
 	
@@ -133,7 +131,7 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
 	{
 		 @Override
 		 public void onReceive(Context arg0, Intent arg1) 
-		 {
+		 {  
              onResume();
 		 }
 	}
@@ -226,9 +224,12 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
                     }
             );
     	
-    		int[] counts = MyApplication.myDbHelper.getSolvedCount();
+		    int[] counts = MyApplication.myDbHelper.getSolvedCount();
+		    MyApplication.COUNT_SOLVED = counts[0];
+		    MyApplication.COUNT_ALL = counts[1];
+    	
     	    TextView solved = (TextView)findViewById(R.id.solved);
-    	    solved.setText(String.format("Solved %d of %d", counts[0], counts[1]));
+    	    solved.setText(String.format("Solved %d of %d", MyApplication.COUNT_SOLVED, MyApplication.COUNT_ALL));
  	    } 
         
         catch (Exception e) 

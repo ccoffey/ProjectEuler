@@ -13,6 +13,9 @@ import android.content.res.Configuration;
 
 public class MyApplication extends Application 
 {
+	public static int COUNT_ALL = 0;
+	public static int COUNT_SOLVED = 0;
+	
 	static ProjectEulerClient updater_pec;
 	static ProjectEulerClient pec;
 	static Vector<Fragment> fragments;
