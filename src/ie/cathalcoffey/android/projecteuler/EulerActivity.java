@@ -15,6 +15,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -35,6 +36,22 @@ public class EulerActivity extends Activity implements SolvingDialogFragment.Not
     private long _id = 0;
 	private int position;
 	private String queryText;
+	
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		
+		if(MyApplication.settings != null && MyApplication.settings.contains("username"))
+		{
+			String username = MyApplication.settings.getString("username", "");
+			SharedPreferences.Editor user_stars_editor = getSharedPreferences(username + "_stars", Context.MODE_PRIVATE).edit();
+			user_stars_editor.clear();
+			for(String id : MyApplication.stars.keySet())
+				user_stars_editor.putBoolean(id, MyApplication.stars.get(id));
+			user_stars_editor.commit();
+		}
+	}
 	
     @Override
 	public void onSaveInstanceState(Bundle outState) 
@@ -233,7 +250,7 @@ public class EulerActivity extends Activity implements SolvingDialogFragment.Not
 	private void myOnPageSelected(int position) 
 	{
 		this.position = position;
-		if(MyApplication.fragments != null && MyApplication.fragments.size() >= position)
+		if(MyApplication.fragments != null && MyApplication.fragments.size() > position)
 		{
 			PageFragment pf = (PageFragment)MyApplication.fragments.get(position);
 			Bundle b = pf.getArguments();
@@ -267,7 +284,7 @@ public class EulerActivity extends Activity implements SolvingDialogFragment.Not
 		if(titleIndicator != null)
 		{
 			titleIndicator.setViewPager(pager);
-		
+			
 			titleIndicator.setOnPageChangeListener
 			( 
 					new OnPageChangeListener()

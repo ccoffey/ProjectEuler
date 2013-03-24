@@ -1,4 +1,5 @@
 package ie.cathalcoffey.android.projecteuler;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -182,20 +183,10 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
 	}
 	
 	@Override
-	public void onResume() 
-	{
-		super.onResume();
-		
-		Log.d("cathal", "LoginLogout: onResume()");
-	}
-	
-	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
 	    super.onCreate(savedInstanceState);
 
-	    Log.d("cathal", "LoginLogout: onCreate()");
-	    
 	    fragmentActivity = this;
 	    getSupportActionBar().setDisplayShowTitleEnabled(false);
 	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -229,8 +220,15 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
     						}
     						
     						MyApplication.myDbHelper.updateSolved();
-    						MyApplication.settings.edit().clear();
-    						MyApplication.settings.edit().commit();
+    						
+    						if(MyApplication.settings == null)
+    						    MyApplication.settings = context.getSharedPreferences("euler", Context.MODE_PRIVATE);
+    						
+    						if(MyApplication.prefEditor == null)
+    							MyApplication.prefEditor = MyApplication.settings.edit();
+    						
+    						MyApplication.prefEditor.clear();
+    						MyApplication.prefEditor.commit();
     						
     						MyApplication.prefEditor = null;
     						MyApplication.settings = null;
@@ -257,7 +255,7 @@ public class LoginLogout extends Activity implements LoginDialogFragment.NoticeD
     					public void onClick(View v) 
     					{
                             if(MyApplication.settings == null)
-    						    MyApplication.settings = getSharedPreferences("euler", MODE_PRIVATE);
+    						    MyApplication.settings = context.getSharedPreferences("euler", Context.MODE_PRIVATE);
 
                             if(MyApplication.prefEditor == null)
     						    MyApplication.prefEditor = MyApplication.settings.edit();

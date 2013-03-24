@@ -84,11 +84,14 @@ public class BusyWork extends AsyncTask<String, Void, Void>
 	    	        
 	    	        MyApplication.myDbHelper.updateProblems(MyApplication.updater_pec, problems, true, userStarted);
 	    	        
-					int[] counts = MyApplication.myDbHelper.getSolvedCount();
-	    		    MyApplication.COUNT_SOLVED = counts[0];
-	    		    MyApplication.COUNT_ALL = counts[1];
-	    		    
-	    	        prefEditor.commit();
+	    	        if(!MyApplication.cancelUpdater)
+	    	        {
+						int[] counts = MyApplication.myDbHelper.getSolvedCount();
+		    		    MyApplication.COUNT_SOLVED = counts[0];
+		    		    MyApplication.COUNT_ALL = counts[1];
+		    		    
+		    	        prefEditor.commit();
+	    	        }
 				}
 		    }
 		    

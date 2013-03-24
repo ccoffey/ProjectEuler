@@ -3,12 +3,13 @@ package ie.cathalcoffey.android.projecteuler;
 import ie.cathalcoffey.android.projecteuler.LoginLogout.LoginOperation;
 import ie.cathalcoffey.android.projecteuler.PageFragment.SolveOperation;
 
+import java.util.Hashtable;
 import java.util.Vector;
 
 import org.holoeverywhere.app.Application;
 import org.holoeverywhere.app.Fragment;
-import org.holoeverywhere.preference.SharedPreferences;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
 public class MyApplication extends Application 
@@ -30,6 +31,8 @@ public class MyApplication extends Application
 	static SolveOperation solve_opt;
 	static LoginOperation login_opt;
 	protected static boolean cancelUpdater;
+	
+	public static Hashtable<String, Boolean> stars;
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) 

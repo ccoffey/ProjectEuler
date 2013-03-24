@@ -106,7 +106,7 @@ public class ProjectEulerClient
 		httppost = new HttpPost("http://projecteuler.net/problem=" + id);
 
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-        nameValuePairs.add(new BasicNameValuePair("guess", guess));
+        nameValuePairs.add(new BasicNameValuePair("guess_" + id, guess));
         nameValuePairs.add(new BasicNameValuePair("confirm", confirm));
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 

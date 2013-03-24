@@ -2,5 +2,9 @@
 <resources>
     
     <string name="app_name">ProjectEuler</string>
-
+    <string name="app_id">484610944921735</string>
+    
+	<string name="cancelled">Cancelled</string>
+    <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
+    <string name="ok">OK</string>
 </resources>

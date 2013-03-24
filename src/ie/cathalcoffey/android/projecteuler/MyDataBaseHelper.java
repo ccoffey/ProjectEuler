@@ -10,6 +10,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,7 +41,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 	
     public MyDataBaseHelper(Context context) 
     {
-    	super(context, DB_NAME, null, 1);
+    	super(context, DB_NAME, null, 5);
         this.context = context; 
     }	
 
@@ -64,6 +67,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
             }
     	}
     	
+    	c.close();
         return new int[]{solved, solved+unsolved};
     }
     
@@ -74,32 +78,56 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
     	
     	String query;
     	
-    	if (MyApplication.display_text != null && MyApplication.display_text.equals("All"))
+    	if (MyApplication.display_text != null && MyApplication.display_text.equals(Label.All.toString()))
     		query = "SELECT _id, title, published, updated, solvedby, solved, html, answer FROM data WHERE ('PROBLEM ' || _id ) LIKE ? OR title LIKE ?";
-    	else if (MyApplication.display_text != null && MyApplication.display_text.equals("Solved"))
+    	else if (MyApplication.display_text != null && MyApplication.display_text.equals(Label.Solved.toString()))
     		query = "SELECT _id, title, published, updated, solvedby, solved, html, answer FROM data WHERE solved = 1 AND (('PROBLEM ' || _id ) LIKE ? OR title LIKE ?)";
+    	else if (MyApplication.display_text != null && MyApplication.display_text.equals(Label.Starred.toString()))
+    		query = "SELECT _id, title, published, updated, solvedby, solved, html, answer FROM data WHERE _id IN (" + toCommaList(MyApplication.stars) + ") AND (('PROBLEM ' || _id ) LIKE ? OR title LIKE ?)";
     	else
     		query = "SELECT _id, title, published, updated, solvedby, solved, html, answer FROM data WHERE solved = 0 AND (('PROBLEM ' || _id ) LIKE ? OR title LIKE ?)";
         
         return myDataBase.rawQuery(query, new String[]{"%" + constraint + "%", "%" + constraint + "%"});
     }
-    
-    public Cursor getData()
+
+	public Cursor getData()
     {		
         String query = "SELECT _id, title, published, updated, solvedby, solved, html, answer FROM data";
         
         if(MyApplication.display_text != null)
         {
-	        if (MyApplication.display_text.equals("Solved"))
+	        if (MyApplication.display_text.equals(Label.Solved.toString()))
 	        	query += " WHERE solved = 1";
 	        
-	        if (MyApplication.display_text.equals("Unsolved"))
+	        else if (MyApplication.display_text.equals(Label.Unsolved.toString()))
 	        	query += " WHERE solved = 0";
+	        
+	        else if (MyApplication.display_text.equals(Label.Starred.toString()))
+	        	query += " WHERE _id IN (" + toCommaList(MyApplication.stars) + ")";
         }
         
         return myDataBase.rawQuery(query, new String[]{});
     }
  
+    private String toCommaList(Hashtable<String, Boolean> stars) 
+    {
+    	if(stars.size() == 0)
+    		return "";
+    	
+    	Set<String> keys = stars.keySet();
+    	String[] sorted_keys = new String[keys.size()];
+    	keys.toArray(sorted_keys);
+    	Arrays.sort(sorted_keys);
+    	
+	    StringBuilder sb = new StringBuilder();
+	    for(String id : sorted_keys)
+	    {
+	        sb.append(",");
+	    	sb.append(id);
+	    }
+	    return sb.substring(1);
+	}
+    
     private void copyDataBase() throws IOException
     {
     	Decompress.unzip(context.getAssets().open("assets.zip"), "/data/data/ie.cathalcoffey.android.projecteuler/");
@@ -114,21 +142,6 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
     public void openDataBase(int mode) throws SQLException
     {
     	String myPath = DB_PATH + DB_NAME;
-    	
-    	File file = context.getDatabasePath(DB_NAME);
-    	if(!file.exists())
-    	{    	    
-        	try 
-        	{
-    			copyDataBase();
-    		} 
-        	
-        	catch (IOException ioe) 
-        	{
-        		throw new Error("Error copying database");
-        	}
-    	}
-    	
     	myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.NO_LOCALIZED_COLLATORS | mode);
     }
  
@@ -140,12 +153,6 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
  
 	@Override
 	public void onCreate(SQLiteDatabase db) 
-	{
- 
-	}
- 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) 
 	{
  
 	}
@@ -275,7 +282,6 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 		{
 		    String html = pec.getProblem(ep.id).html();
 			Document soup = Jsoup.parse(html);
-			
 			for(Element img : soup.select("img"))
 			{
 				if(img.hasAttr("src"))
@@ -304,7 +310,9 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 				}
 			}
 			
-		    args.put("html", html);
+			String body = soup.body().html();
+			
+		    args.put("html", body);
 		    args.put("answer", ep.answer);
 		} 
 		
@@ -366,5 +374,45 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 	public void kill() 
 	{
 	    cancel = true;	
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) 
+	{
+		/*if(newVersion > oldVersion)
+		{
+			File file = context.getDatabasePath(DB_NAME);
+			if(file.exists())
+				file.delete();
+			
+			try 
+	    	{
+				copyDataBase();
+			} 
+	    	
+	    	catch (IOException e)
+	    	{
+	    		throw new Error("Error copying database");
+	    	}
+		}
+		*/
+	}
+	
+	public void createDataBase() throws IOException {	
+		//this.getReadableDatabase();
+		
+		File file = context.getDatabasePath(DB_NAME);
+    	if(!file.exists())
+    	{
+        	try 
+        	{
+    			copyDataBase();
+    		} 
+        	
+        	catch (IOException e)
+        	{
+        		throw new Error("Error copying database");
+        	}
+    	}	
 	}
 }
