@@ -4,11 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <LinearLayout
+        android:id="@+id/problemUpdateBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true" 
+        android:background="#3B5998">
+		
+		<TextView
+		    android:id="@+id/newproblem_message"
+		    android:textColor="#fff"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:padding="5dp"
+	        android:textSize="12dp"
+	        android:singleLine="true"
+	        android:text="No new problem has been scheduled for release" />
+	   
+    </LinearLayout>
+    
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/progress" 
+        android:layout_below="@+id/problemUpdateBar"
+        android:layout_above="@+id/progress"
         >
     </ListView>
 
@@ -21,6 +43,7 @@
         android:background="@drawable/abs__ab_solid_dark_holo">
 		
 		<TextView
+		    android:singleLine="true"
 		    android:textColor="#fff"
 		    android:textSize="@dimen/abs__action_bar_title_text_size"
 		    android:id="@+id/solved"

@@ -7,4 +7,8 @@
 	<string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
     <string name="ok">OK</string>
+    
+    <string name="action">Perform action</string>
+    <string name="undobar_sample_message">Action performed.</string>
+    <string name="undo">Hide</string>
 </resources>

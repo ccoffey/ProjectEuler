@@ -83,6 +83,21 @@ public class ProjectEulerClient
 		httpclient.getParams().setParameter("http.protocol.expect-continue", false);
 	}
 	
+	NewProblem getNewProblemInfo() throws ParseException, IOException
+	{
+		String content = quickGet("http://projecteuler.net/minimal=new");
+		if(content.equals("No new problems currently scheduled"))
+			return null;
+		
+		else
+		{
+			String[] rows = content.split("\n");
+			String[] items = rows[0].split("##");
+			
+			return new NewProblem(items[0], items[1]);
+		}
+	}
+		
 	Drawable loadImageFromWeb(String url)
     {
         try

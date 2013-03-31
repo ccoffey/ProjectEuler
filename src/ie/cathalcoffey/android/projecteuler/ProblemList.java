@@ -1,6 +1,8 @@
 package ie.cathalcoffey.android.projecteuler;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Vector;
 
@@ -21,6 +23,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +42,7 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
     private ArrayAdapter spinnerArrayAdapter;
     private SearchView searchView;
 	private boolean first = true;
+	private NewProblemBarController newProblemBarController;
 	
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) 
@@ -76,7 +80,7 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
         else
         	loginlogout = menu.add(Menu.NONE, 123, Menu.NONE, "Login");
         loginlogout.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);	
-        
+           
         return true;
     }
 	
@@ -105,6 +109,7 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
+	    	
 		    case 456:
 		    	Intent settings = new Intent(this, Settings.class);
 	        	settings.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -128,6 +133,8 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
 	{
 	    super.onResume();
 		
+        new CheckNewProblemTask(this).execute();
+        
 	    LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("UPDATE_COMPLETE"));
 	    
 	    TextView solved = (TextView)findViewById(R.id.solved); 
@@ -357,4 +364,18 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
 		
 		return false;
 	}
+
+	@Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(newProblemBarController != null)
+        	newProblemBarController.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if(newProblemBarController != null)
+        	newProblemBarController.onRestoreInstanceState(savedInstanceState);
+    }
 }
