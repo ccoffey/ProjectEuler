@@ -111,9 +111,9 @@ public class ProblemList extends Activity implements SearchView.OnQueryTextListe
 	    switch (item.getItemId()) {
 	    	
 		    case 456:
-		    	Intent settings = new Intent(this, Settings.class);
+		    	Intent settings = new Intent(this, PreferencesActivity.class);
 	        	settings.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-	        	startActivity(settings);
+	        	startActivity(settings);        	
 	        	break;
 		    
 			case 123:

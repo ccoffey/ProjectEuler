@@ -174,7 +174,7 @@ public class MyDataBaseHelper extends SQLiteOpenHelper
 		NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     	NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
     	
-    	Intent intent = new Intent(context, Settings.class);
+    	Intent intent = new Intent(context, PreferencesActivity.class);
     	intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);        	
     	PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     	
